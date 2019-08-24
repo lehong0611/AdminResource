@@ -1,0 +1,106 @@
+<div class="main-content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card card-manage">
+          <div class="card-header card-header-icon" data-background-color="purple">
+            <i class="material-icons">assignment</i>
+          </div>
+          <div class="card-content">
+            <h4 class="card-title card-title-custome">Danh sách đại lý</h4>
+            <div class="toolbar" style="text-align: center">
+              <!--        Here you can write extra buttons/actions for the toolbar              -->
+              <button class="btn btn-primary add" (click)="openDialogAdd()">
+                <i class="material-icons">add_box</i>
+                <span style="margin-left: 10px">Thêm mới</span>
+              </button>
+            </div>
+            <div class="material-datatables table-responsive">
+              <table id="datatables" class="table table-striped table-no-bordered table-hover dtr-inline"
+                cellspacing="0" width="100%" style="width:100%">
+                <thead>
+                  <tr>
+                    <th>{{ dataTable.headerRow[0] }}</th>
+                    <th>{{ dataTable.headerRow[1] }}</th>
+                    <th>{{ dataTable.headerRow[2] }}</th>
+                    <th>{{ dataTable.headerRow[3] }}</th>
+                    <th>{{ dataTable.headerRow[4] }}</th>
+                    <th class="disabled-sorting text-center">{{ dataTable.headerRow[5] }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let row of dataTable.dataRows">
+                    <td>{{row[0]}}</td>
+                    <td>{{row[1]}}</td>
+                    <td>{{row[2]}}</td>
+                    <td>{{row[3]}}</td>
+                    <td>{{row[4]}}</td>
+                    <td class="text-center">
+                      <button class="btn btn-link btn-warning btn-just-icon edit" matTooltip="Sửa"
+                        [matTooltipPosition]="'left'" (click)="openDialogAdd(row)">
+                        <i class="material-icons">mode_edit</i>
+                      </button>
+                      <button class="btn btn-link btn-danger btn-just-icon remove" (click)="openDeleteDialog()"
+                        matTooltip="Xóa" [matTooltipPosition]="'left'">
+                        <i class="material-icons">close</i>
+                      </button>
+                      <button class="btn btn-link btn-success btn-just-icon stop" matTooltip="Dừng hoạt động"
+                        [matTooltipPosition]="'left'" (click)="openStopDialog()">
+                        <i class="material-icons">visibility_off</i>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <!-- end content-->
+        </div>
+        <!--  end card  -->
+      </div>
+      <!-- end col-md-12 -->
+    </div>
+    <!-- end row -->
+    <ng-template #addAgency>
+      <h1 mat-dialog-title class="text-center"> {{isUpdate==true?'Cập nhật': 'Tạo mới'}} đại lý </h1>
+      <div mat-dialog-content>
+        <form [formGroup]="addForm">
+          <mat-form-field>
+            <input matInput placeholder="Tên đại lý" formControlName="name" required>
+            <!-- <mat-error class="error-message"
+              *ngIf="addForm.get('name').hasError('required') && (addForm.get('name').dirty || addForm.get('name').touched)">
+              Không được bỏ trống trường này
+            </mat-error> -->
+          </mat-form-field>
+          <mat-form-field>
+            <input matInput placeholder="Số điện thoại" formControlName="phone" required>
+          </mat-form-field>
+          <mat-form-field>
+            <input matInput placeholder="Địa chỉ" formControlName="address" required>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Chọn Admin</mat-label>
+            <input type="text" placeholder="Vui lòng chọn" aria-label="Number" matInput formControlName="admin"
+              [matAutocomplete]="auto">
+            <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+              <mat-option *ngFor="let admin of filteredOptions | async" [value]="admin">
+                {{admin}}
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+          <div class="radio-custom">
+            <label>Thiết lập trạng thái hoạt động</label>
+            <mat-radio-group class="radio-custom" formControlName="active">
+              <mat-radio-button value="true">Cho phép hoạt động</mat-radio-button>
+              <mat-radio-button value="false">Dừng hoạt động</mat-radio-button>
+            </mat-radio-group>
+          </div>
+        </form>
+      </div>
+      <div mat-dialog-actions>
+        <button mat-button mat-dialog-close mat-raised-button class="btn btn-danger">Hủy</button>
+        <button mat-button cdkFocusInitial mat-raised-button class="btn btn-primary save" align='end'>Lưu</button>
+      </div>
+    </ng-template>
+  </div>
+</div>
