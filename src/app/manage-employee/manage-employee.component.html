@@ -10,7 +10,7 @@
             <h4 class="card-title card-title-custome">Danh sách nhân viên</h4>
             <div class="toolbar" style="text-align: center">
               <!--        Here you can write extra buttons/actions for the toolbar              -->
-              <button class="btn btn-primary add">
+              <button class="btn btn-primary add" (click)="openDialogAdd()">
                 <i class="material-icons">person_add</i>
                 <span style="margin-left: 10px">Thêm mới</span>
               </button>
@@ -20,7 +20,7 @@
                 cellspacing="0" width="100%" style="width:100%">
                 <thead>
                   <tr>
-                    <th>{{ dataTable.headerRow[0] }}</th>
+                    <th [hidden]="true">{{ dataTable.headerRow[0] }}</th>
                     <th>{{ dataTable.headerRow[1] }}</th>
                     <th>{{ dataTable.headerRow[2] }}</th>
                     <th>{{ dataTable.headerRow[3] }}</th>
@@ -28,27 +28,35 @@
                     <th>{{ dataTable.headerRow[5] }}</th>
                     <th>{{ dataTable.headerRow[6] }}</th>
                     <th>{{ dataTable.headerRow[7] }}</th>
-                    <th class="disabled-sorting text-center">{{ dataTable.headerRow[8] }}</th>
+                    <th [hidden]="true">{{ dataTable.headerRow[8] }}</th>
+                    <th [hidden]="true">{{ dataTable.headerRow[9] }}</th>
+                    <th class="disabled-sorting text-center">{{ dataTable.headerRow[10] }}</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr *ngFor="let row of dataTable.dataRows">
-                    <td>{{row[0]}}</td>
-                    <td>{{row[1]}}</td>
-                    <td>{{row[2]}}</td>
-                    <td>{{row[3]}}</td>
-                    <td>{{row[4]}}</td>
-                    <td>{{row[5]}}</td>
-                    <td>{{row[6]}}</td>
-                    <td>{{row[7]}}</td>
+                    <td [hidden]="true">{{row['id']}}</td>
+                    <td>{{row['fullname']}}</td>
+                    <td>{{row['username']}}</td>
+                    <td>{{row['email']}}</td>
+                    <td>{{row['phone']}}</td>
+                    <td>{{row['role']}}</td>
+                    <td>{{row['agencyId']}}</td>
+                    <td>{{row['active']? 'Active': 'Block'}}</td>
+                    <td [hidden]="true">{{row['image']}}</td>
+                    <td [hidden]="true">{{row['password']}}</td>
                     <td class="text-center">
                       <button class="btn btn-link btn-warning btn-just-icon edit" matTooltip="Sửa"
-                        [matTooltipPosition]="'left'">
+                        [matTooltipPosition]="'left'" (click)="openDialogAdd(row)">
                         <i class="material-icons">mode_edit</i>
                       </button>
                       <button class="btn btn-link btn-danger btn-just-icon remove" matTooltip="Xóa"
                         [matTooltipPosition]="'left'">
                         <i class="material-icons">close</i>
+                      </button>
+                      <button class="btn btn-link btn-info btn-just-icon remove" matTooltip="Xem ảnh"
+                        [matTooltipPosition]="'left'">
+                        <i class="material-icons">person</i>
                       </button>
                     </td>
                   </tr>
@@ -68,26 +76,74 @@
       <h1 mat-dialog-title class="text-center"> {{isUpdate==true?'Cập nhật': 'Tạo mới'}} nhân viên </h1>
       <div mat-dialog-content>
         <form [formGroup]="addForm">
-          <mat-form-field>
-            <input matInput placeholder="Tên đại lý" formControlName="name" required>
-            <!-- <mat-error class="error-message"
-              *ngIf="addForm.get('name').hasError('required') && (addForm.get('name').dirty || addForm.get('name').touched)">
-              Không được bỏ trống trường này
-            </mat-error> -->
-          </mat-form-field>
-          <mat-form-field>
-            <input matInput placeholder="Số điện thoại" formControlName="phone" required>
-          </mat-form-field>
-          <mat-form-field>
-            <input matInput placeholder="Địa chỉ" formControlName="address" required>
-          </mat-form-field>
-          <div class="radio-custom">
-            <label>Thiết lập trạng thái hoạt động</label>
-            <mat-radio-group class="radio-custom" formControlName="active">
-              <mat-radio-button value="true">Cho phép hoạt động</mat-radio-button>
-              <mat-radio-button value="false">Dừng hoạt động</mat-radio-button>
-            </mat-radio-group>
-          </div>
+          <mat-grid-list cols="{{isUpdate? 4 : 2}}" rowHeight="80px">
+            <mat-grid-tile>
+              <mat-form-field>
+                <input matInput placeholder="Họ và tên" formControlName="fullname" required>
+              </mat-form-field>
+            </mat-grid-tile>
+            <mat-grid-tile>
+              <mat-form-field>
+                <input matInput placeholder="Địa chỉ email" formControlName="email" required>
+                <mat-error *ngIf="addForm.get('email').invalid">Vui lòng nhập đúng định dạng email</mat-error>
+              </mat-form-field>
+            </mat-grid-tile>
+            <mat-grid-tile>
+              <mat-form-field>
+                <input matInput placeholder="Số điện thoại" formControlName="phone" required>
+              </mat-form-field>
+            </mat-grid-tile>
+            <mat-grid-tile *ngIf="isUpdate">
+              <mat-form-field>
+                <input matInput placeholder="Thuộc đại lý" formControlName="agency" readonly>
+              </mat-form-field>
+            </mat-grid-tile>
+            <mat-grid-tile>
+              <mat-form-field>
+                <input matInput placeholder="Tên đăng nhập" formControlName="username" required>
+              </mat-form-field>
+            </mat-grid-tile>
+            <mat-grid-tile>
+              <mat-form-field hintLabel="Mật khẩu ít nhất 8 kí tự">
+                <input matInput placeholder="Mật khẩu khởi tạo" [type]="hide ? 'password' : 'text'"
+                  formControlName="password" required #input [readonly]="isUpdate">
+                <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'"
+                  [attr.aria-pressed]="hide">
+                  <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+                </button>
+                <mat-hint align="end">{{input.value?.length || 0}}</mat-hint>
+              </mat-form-field>
+            </mat-grid-tile>
+            <mat-grid-tile *ngIf="isUpdate">
+              <div class="radio-custom">
+                <mat-label>Chức vụ:</mat-label>
+                <mat-radio-group class="radio-custom" formControlName="role">
+                  <mat-radio-button value="Nhân viên" [disabled]="addForm.value.role == 'Admin'">Nhân viên
+                  </mat-radio-button>
+                  <mat-radio-button value="Admin" [disabled]="addForm.value.role == 'Nhân viên'">Quản trị viên
+                  </mat-radio-button>
+                </mat-radio-group>
+              </div>
+            </mat-grid-tile>
+            <mat-grid-tile *ngIf="isUpdate">
+              <div class="radio-custom">
+                <mat-label>Trạng thái:</mat-label>
+                <mat-radio-group class="radio-custom" formControlName="active">
+                  <mat-radio-button value="true" [disabled]="addForm.value.active == 'false'">Active</mat-radio-button>
+                  <mat-radio-button value="false" [disabled]="addForm.value.active == 'true'">Block</mat-radio-button>
+                </mat-radio-group>
+              </div>
+            </mat-grid-tile>
+            <mat-grid-tile colspan="2">
+              <div>
+                <mat-label>Upload hình ảnh</mat-label>
+                <input type="file" class="btn mt-2" formControlName="image" />
+              </div>
+            </mat-grid-tile>
+            <mat-grid-tile colspan="2">
+              <textarea matInput></textarea>
+            </mat-grid-tile>
+          </mat-grid-list>
         </form>
       </div>
       <div mat-dialog-actions>

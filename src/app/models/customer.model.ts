@@ -1,4 +1,4 @@
-export class User {
+export class Customer {
     id: number
     fullname: string
     image: string
@@ -6,7 +6,6 @@ export class User {
     username: string
     email: string
     password: string
-    role: string
+    address: string
     active: boolean
-    agencyId: number
 }

@@ -45,3 +45,27 @@
         font-size: 11px;
     }
 }
+
+.mat-grid-tile {
+    .mat-form-field {
+        width: 100%;
+        padding: 10%;
+    }
+}
+
+.mat-dialog-actions {
+    justify-content: flex-end;
+}
+
+.mat-radio-button {
+    margin: 0 50px;
+}
+
+.radio-custom {
+    display: flex;
+    flex-direction: column;
+
+    .mat-label {
+        margin-bottom: 5px;
+    }
+}
