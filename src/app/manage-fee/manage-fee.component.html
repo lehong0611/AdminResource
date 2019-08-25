@@ -1,3 +1,161 @@
-<p>
-  manage-fee works!
-</p>
+<div class="main-content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card card-manage">
+          <div class="card-header card-header-icon" data-background-color="purple">
+            <i class="material-icons">assignment</i>
+          </div>
+          <div class="card-content">
+            <h4 class="card-title card-title-custome">Danh sách biểu phí</h4>
+            <div class="toolbar" style="text-align: center">
+              <h4 class="card-title card-title-custome">Danh sách biểu phí giao hàng</h4>
+              <button class="btn btn-primary add" (click)="openDialogAdd()">
+                <i class="material-icons">add_box</i>
+                <span style="margin-left: 10px">Thêm mới</span>
+              </button>
+            </div>
+            <div class="material-datatables table-responsive table-custom">
+              <table id="datatables" class="datatables table table-striped table-no-bordered table-hover dtr-inline"
+                cellspacing="0" width="100%" style="width:100%">
+                <thead>
+                  <tr>
+                    <th [hidden]='true'>{{ dataTableForTransfer.headerRow[0] }}</th>
+                    <th>{{ dataTableForTransfer.headerRow[1] }}</th>
+                    <th>{{ dataTableForTransfer.headerRow[2] }}</th>
+                    <th>{{ dataTableForTransfer.headerRow[3] }}</th>
+                    <th>{{ dataTableForTransfer.headerRow[4] }}</th>
+                    <th>{{ dataTableForTransfer.headerRow[5] }}</th>
+                    <th class="disabled-sorting text-center">{{ dataTableForTransfer.headerRow[6] }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let row of dataTableForTransfer.dataRows">
+                    <td [hidden]='true'>{{row['id']}}</td>
+                    <td>{{row['weigh']}} Kg</td>
+                    <td>{{row['distance']}}</td>
+                    <td>{{row['service']}}</td>
+                    <td>{{row['type']}}</td>
+                    <td>{{row['value']}} VNĐ</td>
+                    <td class="text-center">
+                      <button class="btn btn-link btn-warning btn-just-icon edit" matTooltip="Sửa"
+                        [matTooltipPosition]="'left'" (click)="openDialogAdd(false, row)">
+                        <i class="material-icons">mode_edit</i>
+                      </button>
+                      <button class="btn btn-link btn-danger btn-just-icon remove" (click)="openDeleteDialog()"
+                        matTooltip="Xóa" [matTooltipPosition]="'left'">
+                        <i class="material-icons">close</i>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <hr>
+            <div class="toolbar" style="text-align: center">
+              <h4 class="card-title card-title-custome">Danh sách biểu phí lấy hàng</h4>
+              <button class="btn btn-primary add" (click)="openDialogAdd(true)">
+                <i class="material-icons">add_box</i>
+                <span style="margin-left: 10px">Thêm mới</span>
+              </button>
+            </div>
+            <div class="material-datatables table-responsive">
+              <table id="datatables" class="datatables table table-striped table-no-bordered table-hover dtr-inline"
+                cellspacing="0" width="100%" style="width:100%">
+                <thead>
+                  <tr>
+                    <th [hidden]='true'>{{ dataTableForTaken.headerRow[0] }}</th>
+                    <th>{{ dataTableForTaken.headerRow[1] }}</th>
+                    <th>{{ dataTableForTaken.headerRow[2] }}</th>
+                    <th>{{ dataTableForTaken.headerRow[3] }}</th>
+                    <th>{{ dataTableForTaken.headerRow[4] }}</th>
+                    <th>{{ dataTableForTaken.headerRow[5] }}</th>
+                    <th class="disabled-sorting text-center">{{ dataTableForTaken.headerRow[6] }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let row of dataTableForTaken.dataRows">
+                    <td [hidden]='true'>{{row['id']}}</td>
+                    <td>{{row['weigh']}} Kg</td>
+                    <td>{{row['distance']}} Km</td>
+                    <td>{{row['service']}}</td>
+                    <td>{{row['type']}}</td>
+                    <td>{{row['value']}} VNĐ</td>
+                    <td class="text-center">
+                      <button class="btn btn-link btn-warning btn-just-icon edit" matTooltip="Sửa"
+                        [matTooltipPosition]="'left'" (click)="openDialogAdd(true, row)">
+                        <i class="material-icons">mode_edit</i>
+                      </button>
+                      <button class="btn btn-link btn-danger btn-just-icon remove" (click)="openDeleteDialog()"
+                        matTooltip="Xóa" [matTooltipPosition]="'left'">
+                        <i class="material-icons">close</i>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <!-- end content-->
+        </div>
+        <!--  end card  -->
+      </div>
+      <!-- end col-md-12 -->
+    </div>
+    <!-- end row -->
+    <ng-template #addFee>
+      <h1 mat-dialog-title class="text-center"> {{isUpdate==true?'Cập nhật': 'Tạo mới'}} biểu phí </h1>
+      <div mat-dialog-content>
+        <form [formGroup]="addForm">
+          <mat-form-field>
+            <mat-label>Khối lượng*</mat-label>
+            <mat-select formControlName="weigh">
+              <mat-option *ngFor="let item of listWeigh" [value]="item">
+                {{item}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field *ngIf="!isTaken">
+            <mat-label>Khu vực*</mat-label>
+            <mat-select formControlName="distance">
+              <mat-option *ngFor="let item of listAreas" [value]="item">
+                {{item}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field *ngIf="isTaken">
+            <mat-label>Khoảng cách*</mat-label>
+            <mat-select formControlName="distance">
+              <mat-option *ngFor="let item of listDistance" [value]="item">
+                {{item}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <div class="mb-2">
+            <mat-label>Dịch vụ*</mat-label>
+            <mat-radio-group formControlName="service">
+              <mat-radio-button value="Chuẩn">Chuẩn</mat-radio-button>
+              <mat-radio-button value="Nhanh">Nhanh</mat-radio-button>
+            </mat-radio-group>
+          </div>
+          <mat-form-field>
+            <input matInput placeholder="Giá tiền" type="number" formControlName="value" class="money">
+            <span matPrefix>$&nbsp;</span>
+            <span matSuffix>VNĐ</span>
+          </mat-form-field>
+          <div>
+            <mat-label>Hình thức*</mat-label>
+            <mat-radio-group formControlName="type">
+              <mat-radio-button value="Lấy hàng">Lấy hàng tại nhà</mat-radio-button>
+              <mat-radio-button value="Giao hàng">Giao hàng tới nơi nhận</mat-radio-button>
+            </mat-radio-group>
+          </div>
+        </form>
+      </div>
+      <div mat-dialog-actions>
+        <button mat-button mat-dialog-close mat-raised-button class="btn btn-danger">Hủy</button>
+        <button mat-button cdkFocusInitial mat-raised-button class="btn btn-primary save" align='end'>Lưu</button>
+      </div>
+    </ng-template>
+  </div>
+</div>

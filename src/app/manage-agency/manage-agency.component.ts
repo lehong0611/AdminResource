@@ -23,7 +23,7 @@ declare const $: any;
 export class ManageAgencyComponent implements OnInit, AfterViewInit {
 
   @ViewChild('addAgency', { static: true }) addAgency: TemplateRef<any>;
-  public dataTable: DataTable;
+  dataTable: DataTable;
   addForm: FormGroup;
   isUpdate: boolean;
   listAgency: Agency[];
@@ -104,7 +104,6 @@ export class ManageAgencyComponent implements OnInit, AfterViewInit {
       dataRows: this.listAgency
     };
 
-    console.log(this.dataTable.dataRows);
     this.addForm = this.formBuilder.group({
       name: ['', Validators.required],
       address: ['', Validators.required],

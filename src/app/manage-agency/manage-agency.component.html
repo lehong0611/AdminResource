@@ -46,14 +46,18 @@
                         matTooltip="Xóa" [matTooltipPosition]="'left'">
                         <i class="material-icons">close</i>
                       </button>
-                      <button class="btn btn-link btn-success btn-just-icon stop" matTooltip="Dừng hoạt động"
-                        [matTooltipPosition]="'left'" (click)="openStopDialog()">
-                        <i class="material-icons">visibility_off</i>
+                      <button class="btn btn-link btn-success btn-just-icon remove" matTooltip="Dừng hoạt động"
+                        [matTooltipPosition]="'left'" *ngIf="row['active']">
+                        <i class="material-icons">lock_outline</i>
+                      </button>
+                      <button class="btn btn-link btn-success btn-just-icon remove" matTooltip="Mở hoạt động"
+                        [matTooltipPosition]="'left'" *ngIf="row['active']==false">
+                        <i class="material-icons">lock_open</i>
                       </button>
                       <button class="btn btn-link btn-info btn-just-icon info" matTooltip="Xem thông tin Admin"
-                      [matTooltipPosition]="'left'" (click)="openInfoAdmin()">
-                      <i class="material-icons">person</i>
-                    </button>
+                        [matTooltipPosition]="'left'" (click)="openInfoAdmin()">
+                        <i class="material-icons">person</i>
+                      </button>
                     </td>
                   </tr>
                 </tbody>
