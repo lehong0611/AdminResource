@@ -7,7 +7,7 @@
             <i class="material-icons">assignment</i>
           </div>
           <div class="card-content">
-            <h4 class="card-title card-title-custome">Danh sách nhân viên</h4>
+            <h4 class="card-title card-title-custome">Danh sách {{userSupper? 'Nhân viên': 'Shipper'}}</h4>
             <div class="toolbar" style="text-align: center">
               <!--        Here you can write extra buttons/actions for the toolbar              -->
               <button class="btn btn-primary add" (click)="openDialogAdd()">
@@ -25,7 +25,7 @@
                     <th>{{ dataTable.headerRow[2] }}</th>
                     <th>{{ dataTable.headerRow[3] }}</th>
                     <th>{{ dataTable.headerRow[4] }}</th>
-                    <th>{{ dataTable.headerRow[5] }}</th>
+                    <th [hidden]="!userSupper">{{ dataTable.headerRow[5] }}</th>
                     <th>{{ dataTable.headerRow[6] }}</th>
                     <th>{{ dataTable.headerRow[7] }}</th>
                     <th [hidden]="true">{{ dataTable.headerRow[8] }}</th>
@@ -40,12 +40,16 @@
                     <td>{{row['username']}}</td>
                     <td>{{row['email']}}</td>
                     <td>{{row['phone']}}</td>
-                    <td>{{row['role']}}</td>
+                    <td [hidden]="!userSupper">{{row['role']}}</td>
                     <td>{{row['agencyId']}}</td>
                     <td>{{row['active']? 'Active': 'Block'}}</td>
                     <td [hidden]="true">{{row['image']}}</td>
                     <td [hidden]="true">{{row['password']}}</td>
                     <td class="text-center">
+                      <button class="btn btn-link btn-info btn-just-icon remove" matTooltip="Xem ảnh"
+                        [matTooltipPosition]="'left'">
+                        <i class="material-icons">photo_library</i>
+                      </button>
                       <button class="btn btn-link btn-warning btn-just-icon edit" matTooltip="Sửa"
                         [matTooltipPosition]="'left'" (click)="openDialogAdd(row)">
                         <i class="material-icons">mode_edit</i>
@@ -54,9 +58,13 @@
                         [matTooltipPosition]="'left'">
                         <i class="material-icons">close</i>
                       </button>
-                      <button class="btn btn-link btn-info btn-just-icon remove" matTooltip="Xem ảnh"
-                        [matTooltipPosition]="'left'">
-                        <i class="material-icons">person</i>
+                      <button class="btn btn-link btn-success btn-just-icon remove" matTooltip="Dừng hoạt động"
+                        [matTooltipPosition]="'left'" *ngIf="!userSupper && row['active']">
+                        <i class="material-icons">lock_outline</i>
+                      </button>
+                      <button class="btn btn-link btn-success btn-just-icon remove" matTooltip="Mở hoạt động"
+                        [matTooltipPosition]="'left'" *ngIf="!userSupper && row['active']==false">
+                        <i class="material-icons">lock_open</i>
                       </button>
                     </td>
                   </tr>
@@ -76,7 +84,7 @@
       <h1 mat-dialog-title class="text-center"> {{isUpdate==true?'Cập nhật': 'Tạo mới'}} nhân viên </h1>
       <div mat-dialog-content>
         <form [formGroup]="addForm">
-          <mat-grid-list cols="{{isUpdate? 4 : 2}}" rowHeight="80px">
+          <mat-grid-list cols="{{userSupper && isUpdate? 4 : 2}}" rowHeight="80px">
             <mat-grid-tile>
               <mat-form-field>
                 <input matInput placeholder="Họ và tên" formControlName="fullname" required>
@@ -93,7 +101,7 @@
                 <input matInput placeholder="Số điện thoại" formControlName="phone" required>
               </mat-form-field>
             </mat-grid-tile>
-            <mat-grid-tile *ngIf="isUpdate">
+            <mat-grid-tile *ngIf="userSupper && isUpdate">
               <mat-form-field>
                 <input matInput placeholder="Thuộc đại lý" formControlName="agency" readonly>
               </mat-form-field>
@@ -114,7 +122,7 @@
                 <mat-hint align="end">{{input.value?.length || 0}}</mat-hint>
               </mat-form-field>
             </mat-grid-tile>
-            <mat-grid-tile *ngIf="isUpdate">
+            <mat-grid-tile *ngIf="userSupper && isUpdate">
               <div class="radio-custom">
                 <mat-label>Chức vụ:</mat-label>
                 <mat-radio-group class="radio-custom" formControlName="role">
@@ -126,11 +134,11 @@
               </div>
             </mat-grid-tile>
             <mat-grid-tile *ngIf="isUpdate">
-              <div class="radio-custom">
+              <div [ngClass]="{'radio-super': userSupper, 'radio-admin': !userSupper}">
                 <mat-label>Trạng thái:</mat-label>
-                <mat-radio-group class="radio-custom" formControlName="active">
-                  <mat-radio-button value="true" [disabled]="addForm.value.active == 'false'">Active</mat-radio-button>
-                  <mat-radio-button value="false" [disabled]="addForm.value.active == 'true'">Block</mat-radio-button>
+                <mat-radio-group [ngClass]="{'radio-super': userSupper}" formControlName="active">
+                  <mat-radio-button value="true" [disabled]="userSupper && addForm.value.active == 'false'">Active</mat-radio-button>
+                  <mat-radio-button value="false" [disabled]="userSupper && addForm.value.active == 'true'">Block</mat-radio-button>
                 </mat-radio-group>
               </div>
             </mat-grid-tile>

@@ -24,7 +24,10 @@ export class ManageEmployeeComponent implements OnInit, AfterViewInit {
   addForm: FormGroup;
   isUpdate: boolean;
   listEmployee: User[];
+  listShipper: User[];
   hide: boolean;
+  userSupper: true;
+
   constructor(private dialog: MatDialog, private formBuilder: FormBuilder) { }
 
   ngOnInit() {
@@ -54,12 +57,38 @@ export class ManageEmployeeComponent implements OnInit, AfterViewInit {
         active: true,
         agencyId: 1
       }
-    ]
+    ];
+    this.listShipper = [
+      {
+        id: 1,
+        fullname: 'Phạm Thị Bích',
+        image: '',
+        phone: '0123456789',
+        username: 'ptb',
+        email: 'bic@yopmail.com',
+        password: '12345678',
+        role: 'Shipper',
+        active: true,
+        agencyId: 1
+      },
+      {
+        id: 2,
+        fullname: 'Phạm Thị Bích',
+        image: '',
+        phone: '0123456789',
+        username: 'ptb',
+        email: 'bic@yopmail.com',
+        password: '12345678',
+        role: 'Shipper',
+        active: true,
+        agencyId: 1
+      }
+    ];
     this.dataTable = {
       headerRow: [
         'Mã nhân viên', 'Họ và tên', 'Tên đăng nhập', 'Email', 'SĐT', 'Chức vụ', 'Thuộc đại lý', 'Trạng thái', 'image', 'password', ''
       ],
-      dataRows: this.listEmployee
+      dataRows: this.userSupper ? this.listEmployee : this.listShipper
     };
     this.addForm = this.formBuilder.group({
       fullname: ['', Validators.required],

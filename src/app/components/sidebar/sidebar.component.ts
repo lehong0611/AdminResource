@@ -18,13 +18,8 @@ export const ROUTESFORSUPER: RouteInfo[] = [
 
 export const ROUTESFORADMIN: RouteInfo[] = [
   { path: '/manage-employee', title: 'Quản lý shipper',  icon: 'people', class: '' },
-  { path: '/manage-order', title: 'Quản lý đơn hàng',  icon: 'pages', class: '' },
+  { path: '/manage-order', title: 'Quản lý đơn hàng',  icon: 'shopping_basket', class: '' },
   { path: '/statistic', title: 'Báo cáo thống kê',  icon: 'attach_money', class: '' },
-  { path: '/dashboard', title: 'Dashboard',  icon: 'dashboard', class: '' },
-  { path: '/user-profile', title: 'User Profile',  icon: 'person', class: '' },
-  { path: '/table-list', title: 'Table List',  icon: 'content_paste', class: '' },
-  { path: '/typography', title: 'Typography',  icon: 'library_books', class: '' },
-  { path: '/icons', title: 'Icons',  icon: 'bubble_chart', class: '' },
 ];
 
 @Component({
@@ -35,8 +30,8 @@ export const ROUTESFORADMIN: RouteInfo[] = [
 export class SidebarComponent implements OnInit {
   menuItemsForSuperAdmin: any[];
   menuItemsForAdmin: any[];
-  userSuper = true;
-  userAdmin = false;
+  userSuper = false;
+  userAdmin = true;
 
   constructor() { }
 
