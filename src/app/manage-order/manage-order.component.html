@@ -1,3 +1,203 @@
-<p>
-  manage-order works!
-</p>
+<div class="main-content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card card-manage">
+          <div class="card-header card-header-icon" data-background-color="purple">
+            <i class="material-icons">assignment</i>
+          </div>
+          <div class="card-content">
+            <div class="session-waiting mt-5">
+              <div class="toolbar" style="text-align: center">
+                <h4 class="card-title card-title-custome">Danh sách đơn hàng chờ xác nhận</h4>
+              </div>
+              <div class="material-datatables table-responsive table-custom">
+                <table id="datatables-waiting" class="table table-no-bordered dtr-inline row-border table-hover"
+                  cellspacing="0" style="width:100%" datatable [dtOptions]="dtOptions">
+                  <thead>
+                    <tr>
+                      <th [hidden]='true'>{{ dataTableForWaiting.headerRow[0] }}</th>
+                      <th class="font-weight-bolder">{{ dataTableForWaiting.headerRow[1] }}</th>
+                      <th class="font-weight-bolder">{{ dataTableForWaiting.headerRow[2] }}</th>
+                      <th class="font-weight-bolder">{{ dataTableForWaiting.headerRow[3] }}</th>
+                      <th class="font-weight-bolder">{{ dataTableForWaiting.headerRow[4] }}</th>
+                      <th class="font-weight-bolder">{{ dataTableForWaiting.headerRow[5] }}</th>
+                      <th class="disabled-sorting text-center">{{ dataTableForWaiting.headerRow[6] }}
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let row of dataTableForWaiting.dataRows">
+                      <td [hidden]='true'>{{row['id']}}</td>
+                      <td>{{row['code']}}</td>
+                      <td>{{row['createdUserName']}}</td>
+                      <td>{{row['createdTime']}}</td>
+                      <td>{{row['addressTaken']}}</td>
+                      <td>{{row['total']}}</td>
+                      <td class="text-center">
+                        <button class="btn btn-link btn-success btn-just-icon edit" matTooltip="Xác nhận"
+                          [matTooltipPosition]="'left'" (click)=accept(row)>
+                          <i class="material-icons icon-accept">event_available</i>
+                        </button>
+                        <button class="btn btn-link btn-danger btn-just-icon remove" matTooltip="Từ chối"
+                          [matTooltipPosition]="'left'" (click)="rejectOrder(row)">
+                          <i class="material-icons icon-reject">event_busy</i>
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <hr>
+            <div class="session-all">
+              <div class="toolbar" style="text-align: center">
+                <h4 class="card-title card-title-custome">Quản lý đơn hàng theo trạng thái</h4>
+                <button class="btn btn-primary add" (click)="openDialogAdd(true)">
+                  <i class="material-icons">add_box</i>
+                  <span style="margin-left: 10px">Thêm mới</span>
+                </button>
+                <mat-form-field style="width: 240px; float: left;">
+                  <mat-label>Hiển thị theo:</mat-label>
+                  <mat-select (selectionChange)="onFilter($event?.value)" [(ngModel)]="status">
+                    <mat-option *ngFor="let item of listStatus" [value]="item.value">
+                      {{item.title}}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+              <div class="material-datatables table-responsive">
+                <table id="datatable-status" class="table table-no-bordered row-border table-hover dtr-inline" cellspacing="0"
+                  style="width:100%" datatable [dtOptions]="dtTable">
+                  <thead>
+                    <tr>
+                      <th>{{ dataTable.headerRow[0] }}</th>
+                      <th [hidden]="true">{{ dataTable.headerRow[1] }}</th>
+                      <th class="font-weight-bolder">{{ dataTable.headerRow[2] }}</th>
+                      <th class="font-weight-bolder">{{ dataTable.headerRow[3] }}</th>
+                      <th class="font-weight-bolder">{{ dataTable.headerRow[4] }}</th>
+                      <th class="font-weight-bolder">{{ dataTable.headerRow[5] }}</th>
+                      <th class="disabled-sorting text-center">{{ dataTable.headerRow[6] }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let row of dataTable.dataRows;let i=index" class="{{ row.isChecked ? 'selected' : ''}}">
+                      <td>
+                        <mat-checkbox (change)="onChecked($event, row, i)" [checked]="row['isChecked']">
+                        </mat-checkbox>
+                      </td>
+                      <td [hidden]="true">{{row['id']}}</td>
+                      <td>{{row['code']}}</td>
+                      <td>{{row['createdUserId']}}</td>
+                      <td>{{row['status']}}</td>
+                      <td>{{row['total']}}</td>
+                      <td class="text-center">
+                        <button class="btn btn-link btn-success btn-just-icon edit" matTooltip="Xem thông tin"
+                          [matTooltipPosition]="'left'" (click)="openDialogAdd(row)">
+                          <i class="material-icons">my_library_books</i>
+                        </button>
+                        <button class="btn btn-link btn-primary btn-just-icon remove" matTooltip="Phân cho shipper"
+                          [matTooltipPosition]="'left'">
+                          <i class="material-icons">assignment_ind</i>
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal show detail wating order -->
+    <ng-template #detailOrder>
+      <h1 mat-dialog-title class="text-center">#{{Order.code}}</h1>
+      <div mat-dialog-content>
+        <div class="row">
+          <div class="col-md-4">
+            <h3 mat-dialog-title class="text-center">Thông tin người gửi</h3>
+            <div class="info-person">
+              <span class="mr-2 icon-person"><i class="material-icons ">person</i></span>
+              <p>{{Order.sendername}}</p>
+            </div>
+            <div class="info-person">
+              <span class="mr-2 icon-phone"><i class="material-icons">phone</i></span>
+              <p>{{Order.senderphone}}</p>
+            </div>
+            <div class="info-person">
+              <span class="mr-2 icon-location"><i class="material-icons">place</i></span>
+              <p>{{Order.senderaddress}}</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <h3 mat-dialog-title class="text-center">Thông tin người nhận</h3>
+            <div class="info-person">
+              <span class="mr-2 icon-person"><i class="material-icons">person</i></span>
+              <p>{{Order.recievername}}</p>
+            </div>
+            <div class="info-person">
+              <span class="mr-2 icon-phone"><i class="material-icons">phone</i></span>
+              <p>{{Order.recieverphone}}</p>
+            </div>
+            <div class="info-person">
+              <span class="mr-2 icon-location"><i class="material-icons">place</i></span>
+              <p>{{Order.recieveraddress}}</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <h3 mat-dialog-title class="text-center">Thông tin khác</h3>
+            <div class="info-person">
+              <span class="mr-2" style="color: #9cdd38"><i class="material-icons">opacity</i></span>
+              <p>{{Order.weigh}} Kg</p>
+            </div>
+            <div class="info-person">
+              <span class="mr-2" style="color: #8a2be2"><i class="material-icons">layers</i></span>
+              <p>{{Order.kind}}</p>
+            </div>
+            <div class="info-person">
+              <span class="mr-2" style="color: #8b008b"><i class="material-icons">local_shipping</i></span>
+              <p>{{Order.service}}</p>
+            </div>
+          </div>
+          <div class="info-person ml-5">
+            <span class="mr-2">
+              <p style="font-weight: bold">Ghi chú:</p>
+            </span>
+            <p>{{Order.note}}</p>
+          </div>
+        </div>
+        <div class="row" *ngIf="!isReject">
+          <div class="col-md-6 card contact">
+            <div class="card-header text-center">
+              Thông tin liên hệ của khách hàng
+            </div>
+            <div class="info-person pt-4" style="font-size: 18px">
+              <div class="info-person mr-5">
+                <span class="mr-2"><i class="material-icons">local_library</i></span>
+                <p>{{Order.createdUserName}}</p>
+              </div>
+              <div class="info-person">
+                <span class="mr-2"><i class="material-icons">local_phone</i></span>
+                <p>{{Order.customerPhone}}</p>
+              </div>
+            </div>
+            <div class="info-person" style="font-size: 18px">
+              <span class="mr-2"><i class="material-icons">my_location</i></span>
+              <p>{{Order.addressTaken}}</p>
+            </div>
+          </div>
+        </div>
+        <div class="row" *ngIf="isReject">
+          <textarea matInput placeholder="Nhập lý do từ chối" class="text-reject" required></textarea>
+        </div>
+      </div>
+      <div mat-dialog-actions>
+        <button mat-button mat-dialog-close mat-raised-button class="btn btn-danger">Hủy</button>
+        <button mat-button cdkFocusInitial mat-raised-button class="btn btn-primary save"
+          align='end'>{{isReject ? 'Từ chối':'Xác nhận'}}</button>
+      </div>
+    </ng-template>
+  </div>
+</div>

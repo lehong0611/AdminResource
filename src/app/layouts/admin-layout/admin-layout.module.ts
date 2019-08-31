@@ -2,7 +2,8 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { DataTablesModule } from 'angular-datatables';
+import { ChartsModule } from 'ng2-charts';
 import { MaterialModule } from '../../material.module';
 
 import { AdminLayoutRoutes } from './admin-layout.routing';
@@ -24,7 +25,8 @@ import { ManageFeeComponent } from '../../manage-fee/manage-fee.component';
     RouterModule.forChild(AdminLayoutRoutes),
     FormsModule,
     ReactiveFormsModule,
-    NgbModule,
+    DataTablesModule,
+    ChartsModule,
     MaterialModule
   ],
   declarations: [

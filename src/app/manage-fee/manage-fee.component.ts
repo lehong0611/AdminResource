@@ -16,7 +16,7 @@ declare const $: any;
   templateUrl: './manage-fee.component.html',
   styleUrls: ['./manage-fee.component.scss']
 })
-export class ManageFeeComponent implements OnInit {
+export class ManageFeeComponent implements OnInit, AfterViewInit {
 
   @ViewChild('addFee', { static: true }) addFee: TemplateRef<any>;
   dataTableForTransfer: DataTable;

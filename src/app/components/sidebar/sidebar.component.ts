@@ -12,14 +12,14 @@ export const ROUTESFORSUPER: RouteInfo[] = [
     { path: '/manage-agency', title: 'Quản lý đại lý',  icon: 'store', class: '' },
     { path: '/manage-employee', title: 'Quản lý nhân viên',  icon: 'people', class: '' },
     { path: '/manage-customer', title: 'Quản lý khách hàng',  icon: 'supervisor_account', class: '' },
-    { path: '/manage-fee', title: 'Quản lý biểu phí',  icon: 'attach_money', class: '' },
+    { path: '/manage-fee', title: 'Quản lý biểu phí',  icon: 'credit_card', class: '' },
     { path: '/statistic', title: 'Báo cáo thống kê',  icon: 'show_chart', class: '' },
 ];
 
 export const ROUTESFORADMIN: RouteInfo[] = [
+  { path: '/manage-order', title: 'Quản lý đơn hàng',  icon: 'local_shipping', class: '' },
   { path: '/manage-employee', title: 'Quản lý shipper',  icon: 'people', class: '' },
-  { path: '/manage-order', title: 'Quản lý đơn hàng',  icon: 'shopping_basket', class: '' },
-  { path: '/statistic', title: 'Báo cáo thống kê',  icon: 'attach_money', class: '' },
+  { path: '/statistic', title: 'Báo cáo thống kê',  icon: 'show_chart', class: '' },
 ];
 
 @Component({

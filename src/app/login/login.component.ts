@@ -9,6 +9,7 @@ import { Router, RouterState, RouterStateSnapshot } from '@angular/router';
 export class LoginComponent implements OnInit {
 
   loginData: any = {};
+  userSuper: true;
 
   // tslint:disable-next-line: max-line-length
   emailValidate = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
@@ -24,7 +25,11 @@ export class LoginComponent implements OnInit {
 
   onSubmit() {
     alert(JSON.stringify(this.loginData));
-    this.router.navigateByUrl('/manage-agency');
+    if (this.userSuper) {
+      this.router.navigateByUrl('/manage-agency');
+    } else {
+      this.router.navigateByUrl('/manage-order');
+    }
   }
 
 }

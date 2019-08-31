@@ -87,18 +87,18 @@
           <mat-grid-list cols="{{userSupper && isUpdate? 4 : 2}}" rowHeight="80px">
             <mat-grid-tile>
               <mat-form-field>
-                <input matInput placeholder="Họ và tên" formControlName="fullname" required>
+                <input matInput placeholder="Họ và tên" formControlName="fullname">
               </mat-form-field>
             </mat-grid-tile>
             <mat-grid-tile>
               <mat-form-field>
-                <input matInput placeholder="Địa chỉ email" formControlName="email" required>
+                <input matInput placeholder="Địa chỉ email" formControlName="email">
                 <mat-error *ngIf="addForm.get('email').invalid">Vui lòng nhập đúng định dạng email</mat-error>
               </mat-form-field>
             </mat-grid-tile>
             <mat-grid-tile>
               <mat-form-field>
-                <input matInput placeholder="Số điện thoại" formControlName="phone" required>
+                <input matInput placeholder="Số điện thoại" formControlName="phone">
               </mat-form-field>
             </mat-grid-tile>
             <mat-grid-tile *ngIf="userSupper && isUpdate">
@@ -108,7 +108,7 @@
             </mat-grid-tile>
             <mat-grid-tile>
               <mat-form-field>
-                <input matInput placeholder="Tên đăng nhập" formControlName="username" required>
+                <input matInput placeholder="Tên đăng nhập" formControlName="username">
               </mat-form-field>
             </mat-grid-tile>
             <mat-grid-tile>
