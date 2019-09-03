@@ -33,12 +33,12 @@ export class ManageOrderComponent implements OnInit, AfterViewInit, OnDestroy {
   isDtInitialized = false;
   // start fake data
   listWaiting: any[];
-  listAllOrders: Order[];
-  listNewOrders: Order[];
-  listTransferOrders: Order[];
-  listSuccessOrders: Order[];
-  listFailOrders: Order[];
-  listReTransferOrders: Order[];
+  listAllOrders: any[];
+  listNewOrders: any[];
+  listTransferOrders: any[];
+  listSuccessOrders: any[];
+  listFailOrders: any[];
+  listReTransferOrders: any[];
   // end fake data
   isUserSupper: true;
   Order: Order;
@@ -53,6 +53,11 @@ export class ManageOrderComponent implements OnInit, AfterViewInit, OnDestroy {
     { value: '5', title: 'Chờ giao lại' },
   ];
   status: any;
+  listTabs = [
+    'Chờ xác nhận', 'Mới tạo', 'Đang giao', 'Thành công', 'Thất bại', 'Chờ giao lại'
+  ];
+  active = false;
+  listOrder = [];
 
   constructor(private dialog: MatDialog, private formBuilder: FormBuilder) { }
 
@@ -81,7 +86,7 @@ export class ManageOrderComponent implements OnInit, AfterViewInit, OnDestroy {
         status: 'waiting',
         estimateTime: '',
         reasonReject: '',
-        total: 25000
+        total: null
       },
       {
         id: 2,
@@ -106,7 +111,7 @@ export class ManageOrderComponent implements OnInit, AfterViewInit, OnDestroy {
         status: 'waiting',
         estimateTime: '',
         reasonReject: '',
-        total: 35000
+        total: null
       }
     ];
     this.listAllOrders = [
@@ -253,10 +258,13 @@ export class ManageOrderComponent implements OnInit, AfterViewInit, OnDestroy {
         if (item.createdUserId === customer.id) {
           item.createdUserName = customer.fullname;
           item.customerPhone = customer.phone;
+          item.customerAddress = customer.address;
+          item.isCustomer = true;
         }
       })
-    })
-    this.initTable();
+    });
+    this.changeTab(0);
+    console.log(this.listWaiting);
   }
 
   ngAfterViewInit() {
@@ -399,6 +407,48 @@ export class ManageOrderComponent implements OnInit, AfterViewInit, OnDestroy {
     } else {
       this.isDtInitialized = true
       this.dtTrigger.next();
+    }
+  }
+
+  changeTab(index) {
+    console.log(this.listWaiting);
+    console.log(index);
+    switch (index) {
+      case 0:
+        this.listOrder = this.listWaiting;
+        break;
+      case 1:
+        this.listOrder = this.listNewOrders;
+        break;
+      case 2:
+        this.listOrder = this.listTransferOrders;
+        break;
+      case 3:
+        this.listOrder = this.listSuccessOrders;
+        break;
+      case 4:
+        this.listOrder = this.listFailOrders;
+        break;
+      default:
+        this.listOrder = this.listReTransferOrders;
+        break;
+    }
+  }
+
+  bindingTextStatus(text) {
+    switch (text) {
+      case 'waiting':
+        return 'Đang chờ';
+      case 'new':
+        return 'Mới tạo';
+      case 'waiting':
+        return 'transfering';
+      case 'success':
+        return 'Thành công';
+      case 'fail':
+        return 'Thất bại';
+      case 're-transfer':
+        return 'Chờ giao lại';
     }
   }
 

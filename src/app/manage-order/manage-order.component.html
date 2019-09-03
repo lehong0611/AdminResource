@@ -7,7 +7,61 @@
             <i class="material-icons">assignment</i>
           </div>
           <div class="card-content">
-            <div class="session-waiting mt-5">
+            <ul class="nav nav-pills mt-5" role="tablist">
+              <li class="nav-item" *ngFor="let pill of listTabs, let i = index" (click)=changeTab(i)>
+                <a class="nav-link" [ngClass]="{'active': i === 0 }" data-toggle="pill" href="#tab-{{i}}"
+                  role="tab">{{pill}}
+                </a>
+              </li>
+            </ul>
+            <div class="tab-content">
+              <div class="tab-pane fade" [ngClass]="{'active': i === 0, 'show': i === 0 }" id="tab-{{i}}"
+                *ngFor="let pill of listTabs, let i = index">
+                <div class="row mt-2">
+                  <div class="col-md-4" *ngFor="let order of listOrder">
+                    <div class="card">
+                      <div class="card-header text-center font-weight-bolder"
+                        [ngClass]="{'bg-customer': order.isCustomer}">{{order.code}}
+                      </div>
+                      <div class="card-body">
+                        <div *ngIf="order.isCustomer" class="wrapper-info mb-2">
+                          <i class="material-icons">person</i>
+                          <span>{{order.createdUserName}}</span>
+                        </div>
+                        <div *ngIf="order.isCustomer" class="wrapper-info mb-2">
+                          <i class="material-icons">location_on</i>
+                          <span>{{order.customerAddress}}</span>
+                        </div>
+                        <div *ngIf="order.isCustomer" class="wrapper-info mb-2">
+                          <i class="material-icons">phone</i>
+                          <span>{{order.customerPhone}}</span>
+                        </div>
+                        <div class="wrapper-info mb-2">
+                          <i class="material-icons">public</i>
+                          <span>{{order.service}}</span>
+                        </div>
+                        <div class="wrapper-info mb-2">
+                          <i class="material-icons">hourglass_full</i>
+                          <span>{{bindingTextStatus(order.status)}}</span>
+                        </div>
+                        <div class="wrapper-info">
+                          <i class="material-icons">attach_money</i>
+                          <span [ngClass]="{'empty-money': !order.total}">{{order.total ? order.total: 0}} VNĐ</span>
+                        </div>
+                      </div>
+                      <div class="card-footer">
+                        <div class="wrapper-footer">
+                          <i class="material-icons">access_time</i>
+                          <span>{{order.createdTime}}</span>
+                        </div>
+                        <button class="btn btn-primary btn-round">Xem chi tiết</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- <div class="session-waiting mt-5">
               <div class="toolbar" style="text-align: center">
                 <h4 class="card-title card-title-custome">Danh sách đơn hàng chờ xác nhận</h4>
               </div>
@@ -48,9 +102,9 @@
                   </tbody>
                 </table>
               </div>
-            </div>
-            <hr>
-            <div class="session-all">
+            </div> -->
+            <!-- <hr> -->
+            <!-- <div class="session-all">
               <div class="toolbar" style="text-align: center">
                 <h4 class="card-title card-title-custome">Quản lý đơn hàng theo trạng thái</h4>
                 <button class="btn btn-primary add" (click)="openDialogAdd(true)">
@@ -105,7 +159,7 @@
                   </tbody>
                 </table>
               </div>
-            </div>
+            </div> -->
           </div>
         </div>
       </div>

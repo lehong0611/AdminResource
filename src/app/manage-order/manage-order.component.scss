@@ -27,6 +27,53 @@
     .card-content {
         padding: 15px 20px;
         position: relative;
+
+        .row {
+            .col-md-4 {
+                .card {
+                    .card-header {
+                        border-bottom: 1px solid rgba(0, 0, 0, .125);
+
+                        &.bg-customer {
+                            background: #eee;
+                        }
+                    }
+
+                    .card-body {
+                        border-bottom: 1px solid rgba(0, 0, 0, .125);
+
+                        .wrapper-info {
+                            display: flex;
+                            height: 43px;
+
+                            .material-icons {
+                                font-size: 20px;
+                                margin: 0 12px;
+                            }
+
+                            .empty-money {
+                                color: #cf3a3b;
+                            }
+                        }
+                    }
+
+                    .card-footer {
+                        .wrapper-footer {
+                            display: flex;
+
+                            .material-icons {
+                                margin: 0 5px;
+                            }
+                        }
+
+                        .btn-round {
+                            border-radius: 30px;
+                            padding: 10px 16px;
+                        }
+                    }
+                }
+            }
+        }
     }
 
     .card-header.card-header-icon+.card-content .card-title {
@@ -51,6 +98,7 @@
         background: #f44336ed;
         color: #fff;
     }
+
     .icon-reject {
         background: #4caf50;
         color: #fff;
@@ -76,8 +124,9 @@
 .icon-location {
     color: #006400;
 }
+
 .contact {
-    border: 1px solid; 
+    border: 1px solid;
 
     .card-header {
         border-bottom: 1px solid burlywood;
