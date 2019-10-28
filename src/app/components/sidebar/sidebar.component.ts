@@ -18,7 +18,7 @@ export const ROUTESFORSUPER: RouteInfo[] = [
 
 export const ROUTESFORADMIN: RouteInfo[] = [
   { path: '/manage-order', title: 'Quản lý đơn hàng',  icon: 'local_shipping', class: '' },
-  { path: '/manage-employee', title: 'Quản lý shipper',  icon: 'people', class: '' },
+  { path: '/manage-shipper', title: 'Quản lý shipper',  icon: 'people', class: '' },
   { path: '/statistic', title: 'Báo cáo thống kê',  icon: 'show_chart', class: '' },
 ];
 
@@ -30,12 +30,12 @@ export const ROUTESFORADMIN: RouteInfo[] = [
 export class SidebarComponent implements OnInit {
   menuItemsForSuperAdmin: any[];
   menuItemsForAdmin: any[];
-  userSuper = false;
-  userAdmin = true;
+  userRole: any;
 
   constructor() { }
 
   ngOnInit() {
+    this.userRole = localStorage.getItem('role');
     this.menuItemsForSuperAdmin = ROUTESFORSUPER.filter(menuItem => menuItem);
     this.menuItemsForAdmin = ROUTESFORADMIN.filter(menuItem => menuItem);
     // this.userSuper = true;

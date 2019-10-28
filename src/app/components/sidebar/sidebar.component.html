@@ -70,7 +70,7 @@
             </li>
         </ul>
     </div>
-    <ul class="nav" *ngIf="userSuper">
+    <ul class="nav" *ngIf="userRole === 'major'">
         <li routerLinkActive="active" *ngFor="let menuItem of menuItemsForSuperAdmin"
             class="{{menuItem.class}} nav-item">
             <a class="nav-link" [routerLink]="[menuItem.path]">
@@ -79,7 +79,7 @@
             </a>
         </li>
     </ul>
-    <ul class="nav" *ngIf="userAdmin">
+    <ul class="nav" *ngIf="userRole === 'minor'">
         <li routerLinkActive="active" *ngFor="let menuItem of menuItemsForAdmin" class="{{menuItem.class}} nav-item">
             <a class="nav-link" [routerLink]="[menuItem.path]">
                 <i class="material-icons">{{menuItem.icon}}</i>

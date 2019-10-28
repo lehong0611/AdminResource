@@ -29,10 +29,18 @@
         position: relative;
 
         .row {
-            .col-md-4 {
+            &.empty-order {
+                justify-content: center;
+            }
+
+            .col-md-3 {
                 .card {
+                    border: 1px solid #00bcd4;
+
                     .card-header {
-                        border-bottom: 1px solid rgba(0, 0, 0, .125);
+                        border-bottom: 1px solid #00bcd4;
+                        padding: 5px;
+                        color: #444868;
 
                         &.bg-customer {
                             background: #eee;
@@ -40,15 +48,22 @@
                     }
 
                     .card-body {
-                        border-bottom: 1px solid rgba(0, 0, 0, .125);
+
+                        &.account {
+                            background: #f0f8ff
+                        }
 
                         .wrapper-info {
                             display: flex;
-                            height: 43px;
+                            border-bottom: 1px dotted #ddd;
+
+                            &.last-info {
+                                border-bottom: none
+                            }
 
                             .material-icons {
                                 font-size: 20px;
-                                margin: 0 12px;
+                                margin: 0 12px 0 0;
                             }
 
                             .empty-money {
@@ -58,71 +73,65 @@
                     }
 
                     .card-footer {
-                        .wrapper-footer {
-                            display: flex;
+                        border-top: 1px solid #00bcd4;
 
-                            .material-icons {
-                                margin: 0 5px;
-                            }
-                        }
-
-                        .btn-round {
-                            border-radius: 30px;
-                            padding: 10px 16px;
+                        .btn {
+                            padding: 9px 9px;
+                            margin: 0;
+                            text-transform: inherit;
                         }
                     }
                 }
             }
         }
-    }
 
-    .card-header.card-header-icon+.card-content .card-title {
-        padding-bottom: 15px;
-    }
+        .button {
+            display: flex;
+            justify-content: flex-end;
 
-    .card-title-custome {
-        margin-left: 74px;
-    }
+            .btn {
+                line-height: 0.58;
+            }
+        }
 
-    .form-group.form-group-sm {
-        padding-bottom: 10px;
-        margin: 20px 0 0 0;
-        font-size: 11px;
-    }
+        .nav-link {
+            color: #000;
 
-    .table-custom {
-        margin-bottom: 15px;
-    }
-
-    .icon-accept {
-        background: #f44336ed;
-        color: #fff;
-    }
-
-    .icon-reject {
-        background: #4caf50;
-        color: #fff;
+            &.active {
+                background: #00bcd4;
+                color: #fff;
+            }
+        }
     }
 }
 
-.order-checkbox {
-    margin: 0 10px;
+.card-header.card-header-icon+.card-content .card-title {
+    padding-bottom: 15px;
 }
 
-.info-person {
-    display: flex;
+.card-title-custome {
+    margin-left: 74px;
 }
 
-.icon-person {
-    color: #6495ed;
+
+.icon-accept {
+    background: #f44336ed;
+    color: #fff;
 }
 
-.icon-phone {
-    color: #bc4b4b;
+.icon-reject {
+    background: #4caf50;
+    color: #fff;
 }
 
-.icon-location {
-    color: #006400;
+.detail-order {
+    .info-person {
+        display: flex;
+
+        .material-icons {
+            font-size: 20px;
+        }
+    }
 }
 
 .contact {
@@ -139,6 +148,58 @@
 
 .text-reject {
     width: 100%;
-    margin: 0 45px;
+    // margin: 0 45px;
     padding: 10px;
+}
+
+.add-order {
+    .info-user {
+        margin-top: 10px;
+
+        .before {
+            background: #649665;
+            padding: 10px;
+            color: #fff;
+            border-radius: 5px;
+            position: relative;
+
+            &::before {
+                content: '';
+                width: 280px;
+                height: 2px;
+                background: #649665;
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                opacity: 0.5;
+            }
+        }
+
+        .input-info {
+            margin-top: 25px;
+
+            .detail-info {
+                border-bottom: 1px dotted #dde;
+                margin: 15px;
+                display: flex;
+
+                .material-icons {
+                    font-size: 18px;
+                    margin: 0 20px 0 0;
+                }
+
+                .shipper {
+                    margin-bottom: 0;
+                    font-weight: 600;
+                    margin-right: 15px;
+                }
+            }
+        }
+    }
+}
+
+.service {
+    .mat-radio-button {
+        margin: 0 15px;
+    }
 }

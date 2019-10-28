@@ -11,11 +11,11 @@ import { Subject } from 'rxjs';
 declare const $: any;
 
 @Component({
-  selector: 'app-manage-employee',
-  templateUrl: './manage-employee.component.html',
-  styleUrls: ['./manage-employee.component.scss']
+  selector: 'app-manage-shipper',
+  templateUrl: './manage-shipper.component.html',
+  styleUrls: ['./manage-shipper.component.scss']
 })
-export class ManageEmployeeComponent implements OnInit, OnDestroy {
+export class ManageShipperComponent implements OnInit, OnDestroy {
 
   @ViewChild('addEmployee', { static: true }) addEmployee: TemplateRef<any>;
   @ViewChild('img', { static: true }) img: TemplateRef<any>
@@ -30,7 +30,6 @@ export class ManageEmployeeComponent implements OnInit, OnDestroy {
 
   listEmployee = [];
   listExceptSuper = [];
-  listShipper: User[];
   hide: boolean;
   userSuper: boolean;
 
@@ -48,23 +47,13 @@ export class ManageEmployeeComponent implements OnInit, OnDestroy {
     this.userSuper = false;
     this.dialog.closeAll();
     this.initTable();
-    if (this.userSuper) {
-      this.userService.getAllEmployee().subscribe((res: any) => {
-        this.listEmployee = res.results;
-        this.chRef.detectChanges();
-        this.dtTrigger.next();
-      }, err => {
-        console.log(err);
-      });
-    } else {
-      this.userService.getAllUserByRole(29, 'shipper').subscribe((res: any) => {
-        this.listEmployee = res.results;
-        this.chRef.detectChanges();
-        this.dtTrigger.next();
-      }, err => {
-        console.log(err);
-      });
-    }
+    this.userService.getAllUserByRole(16, 'shipper').subscribe((res: any) => {
+      this.listEmployee = res.results;
+      this.chRef.detectChanges();
+      this.dtTrigger.next();
+    }, err => {
+      console.log(err);
+    });
     this.addForm = this.formBuilder.group({
       UserId: [null],
       FullName: ['', Validators.required],
@@ -78,9 +67,7 @@ export class ManageEmployeeComponent implements OnInit, OnDestroy {
       Phone: ['', Validators.compose([
         Validators.required, Validators.pattern(this.validatePhone)
       ])],
-      Role: ['staff', Validators.required],
       Image: [''],
-      AgencyId: [null],
       Active: ['true', Validators.required]
     });
   }
@@ -90,18 +77,8 @@ export class ManageEmployeeComponent implements OnInit, OnDestroy {
       'pagingType': 'full_numbers',
       'lengthChange': false,
       'ordering': false,
-      'columnDefs': [
-        { 'width': '10%', 'targets': 1 },
-        { 'width': '10%', 'targets': 2 },
-        { 'width': '15%', 'targets': 3 },
-        { 'width': '10%', 'targets': 4 },
-        { 'width': '10%', 'targets': 5 },
-        { 'width': '10%', 'targets': 6 },
-        { 'width': '10%', 'targets': 7 },
-        { 'width': '25%', 'targets': 8 }
-      ],
       'createdRow': function (row, data, dataIndex) {
-        if (data[7] === 'Active') {
+        if (data[5] === 'Active') {
           $(row).css('background-color', '#fff');
         } else {
           $(row).css('background-color', '#eee');
@@ -117,14 +94,6 @@ export class ManageEmployeeComponent implements OnInit, OnDestroy {
     };
   }
 
-  convertRole(text) {
-    if (text === 'staff') {
-      return 'Nhân viên';
-    } else {
-      return 'QTV'
-    }
-  }
-
   openDialogAdd(item) {
     this.isUpdate = false;
     if (item) {
@@ -134,8 +103,6 @@ export class ManageEmployeeComponent implements OnInit, OnDestroy {
       this.addForm.controls['UserName'].setValue(item.UserName);
       this.addForm.controls['Email'].setValue(item.Email);
       this.addForm.controls['Phone'].setValue(item.Phone);
-      this.addForm.controls['AgencyId'].setValue(item.AgencyId);
-      this.addForm.controls['Role'].setValue(item.Role);
       this.addForm.controls['Image'].setValue(item.Image);
       this.addForm.controls['Active'].setValue(item.Active ? 'true' : 'false');
     } else {
@@ -144,13 +111,11 @@ export class ManageEmployeeComponent implements OnInit, OnDestroy {
       this.addForm.controls['Email'].setValue('');
       this.addForm.controls['Phone'].setValue('');
       this.addForm.controls['Password'].setValue('');
-      this.addForm.controls['AgencyId'].setValue(null);
       this.addForm.controls['Image'].setValue('');
-      this.addForm.controls['Role'].setValue('staff');
       this.addForm.controls['Active'].setValue('true');
     }
     this.dialog.open(this.addEmployee, {
-      width: '80%',
+      width: '40%',
       autoFocus: true,
       disableClose: true
     });
@@ -162,36 +127,37 @@ export class ManageEmployeeComponent implements OnInit, OnDestroy {
 
   // Method to Add new Emp
   saveEmp() {
+    const newEmp = this.addForm.value;
+    newEmp.Role = 'shipper';
+    newEmp.AgencyId = 16;
     if (this.fileToUpload) {
       this.userService.postFile(this.fileToUpload).subscribe((res: any) => {
+        console.log(res);
         const imgUrl = `http://localhost:3000/uploads/${res.filename}`;
-        this.addForm.value.Image = imgUrl;
-        const newEmp = this.addForm.value;
+        newEmp.Image = imgUrl;
         this.userService.addNewEmp(newEmp).subscribe((res: any) => {
-          this.userService.getAllEmployee().subscribe((newList: any) => {
+          this.userService.getAllUserByRole(newEmp.AgencyId, newEmp.Role).subscribe((newList: any) => {
             this.listEmployee = newList.results;
             this.dialog.closeAll();
             this.addForm.reset();
             this.rerender();
           });
-          console.log('New Product added');
+          console.log('New shipper added');
         }, err => {
-          console.log('Could not add Agency')
+          console.log('Could not add shipper');
         });
       })
     } else {
-      const newEmp = this.addForm.value;
       this.userService.addNewEmp(newEmp).subscribe((res: any) => {
-        this.userService.getAllEmployee().subscribe((newList: any) => {
-          console.log(newList.results);
+        this.userService.getAllUserByRole(newEmp.AgencyId, newEmp.Role).subscribe((newList: any) => {
           this.listEmployee = newList.results;
           this.dialog.closeAll();
           this.addForm.reset();
           this.rerender();
         });
-        console.log('New Product added');
+        console.log('New shipper added');
       }, err => {
-        console.log('Could not add Agency')
+        console.log('Could not add shipper');
       });
     }
   }
@@ -199,26 +165,27 @@ export class ManageEmployeeComponent implements OnInit, OnDestroy {
   updateEmp() {
     const id = this.addForm.get('UserId').value;
     const newEmp = this.addForm.value;
+    newEmp.Role = 'shipper';
+    newEmp.AgencyId = 16;
     if (this.fileToUpload) {
       this.userService.postFile(this.fileToUpload).subscribe((res: any) => {
-        console.log(res);
         const imgUrl = `http://localhost:3000/uploads/${res.filename}`;
         newEmp.Image = imgUrl;
         this.userService.updateEmp(id, newEmp).subscribe(() => {
-          this.userService.getAllEmployee().subscribe((updateList: any) => {
+          this.userService.getAllUserByRole(newEmp.AgencyId, newEmp.Role).subscribe((updateList: any) => {
             this.listEmployee = updateList.results;
             this.dialog.closeAll();
             this.addForm.reset();
             this.rerender();
           });
-          console.log('Product is updated');
+          console.log('shipper is updated');
         }, err => {
           console.log('Could not update')
         });
       })
     }
     this.userService.updateEmp(id, newEmp).subscribe(() => {
-      this.userService.getAllEmployee().subscribe((updateList: any) => {
+      this.userService.getAllUserByRole(newEmp.AgencyId, newEmp.Role).subscribe((updateList: any) => {
         this.listEmployee = updateList.results;
         this.dialog.closeAll();
         this.addForm.reset();
@@ -233,12 +200,8 @@ export class ManageEmployeeComponent implements OnInit, OnDestroy {
   // We will use this method to destroy old table and re-render new table
   rerender() {
     this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
-      // Destroy the table first in the current context
       dtInstance.destroy();
-
-      // Call the dtTrigger to rerender again
       this.dtTrigger.next();
-
     });
   }
 
@@ -281,16 +244,17 @@ export class ManageEmployeeComponent implements OnInit, OnDestroy {
 
   onStopActive(emp) {
     console.log(emp);
-    const statusAdmin = {
+    const statusShipper = {
       FullName: emp.FullName,
       UserName: emp.UserName,
       UserId: emp.UserId,
       Phone: emp.Phone,
       Role: emp.Role,
+      AgencyId: emp.AgencyId,
       Active: !emp.Active
     }
-    this.userService.updateEmp(emp.UserId, statusAdmin).subscribe(res => {
-      this.userService.getAllEmployee().subscribe((updateList: any) => {
+    this.userService.updateEmp(emp.UserId, statusShipper).subscribe(res => {
+      this.userService.getAllUserByRole(16, emp.Role).subscribe((updateList: any) => {
         this.listEmployee = updateList.results;
         this.rerender();
       });
@@ -316,4 +280,5 @@ export class ManageEmployeeComponent implements OnInit, OnDestroy {
     }
     this.dialog.closeAll();
   }
+
 }

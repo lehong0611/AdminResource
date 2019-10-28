@@ -5,9 +5,9 @@
             <div class="container">
                 <div class="row">
                     <div class="col-md-6 col-sm-6 offset-md-3 offset-sm-3">
-                        <form (ngSubmit)="f.form.valid && onSubmit()" #f="ngForm">
+                        <form [formGroup]="loginForm">
                             <div class="card card-login card-hidden">
-                                <div class="card-header text-center" data-background-color="rose">
+                                <div class="card-header text-center" data-background-color="green">
                                     <h4 class="card-title">WELCOME</h4>
                                 </div>
                                 <div class="card-content">
@@ -17,14 +17,14 @@
                                         </span>
                                         <div class="form-group label-floating">
                                             <label class="control-label" for="email">Email</label>
-                                            <input type="email" class="form-control input-custome" id="email"
-                                                name="email" #email="ngModel" [(ngModel)]="loginData.email"
-                                                [pattern]="emailValidate" required>
+                                            <input type="email" class="form-control input-custome"
+                                                formControlName="Email">
                                         </div>
                                     </div>
-                                    <div class="invalid-feedback error" *ngIf="f.submitted && email.invalid">
-                                        <div *ngIf="email?.errors.required">Email chưa được nhập</div>
-                                        <div *ngIf="email?.errors.pattern">Email không hợp lệ</div>
+                                    <div class="invalid-feedback error" *ngIf="loginForm.get('Email').touched">
+                                        <div *ngIf="loginForm.get('Email').hasError('required')">Email chưa được nhập
+                                        </div>
+                                        <div *ngIf="loginForm.get('Email').hasError('email')">Email không hợp lệ</div>
                                     </div>
                                     <div class="input-group">
                                         <span class="input-group-addon">
@@ -32,18 +32,20 @@
                                         </span>
                                         <div class="form-group label-floating">
                                             <label class="control-label" for="pass">Mật khẩu</label>
-                                            <input type="password" class="form-control input-custome" id="pass"
-                                                name="password" #password="ngModel" [(ngModel)]="loginData.password"
-                                                minlength="8" required>
+                                            <input type="password" class="form-control input-custome"
+                                                formControlName="Password">
                                         </div>
                                     </div>
-                                    <div *ngIf="f.submitted && password.invalid" class="invalid-feedback error">
-                                        <div *ngIf="password?.errors.required">Mật khẩu chưa được nhập</div>
-                                        <div *ngIf="password?.errors.minlength">Mật khẩu phải ít nhất 8 ký tự</div>
+                                    <div *ngIf="loginForm.get('Password').touched" class="invalid-feedback error">
+                                        <div *ngIf="loginForm.get('Password').hasError('required')">Mật khẩu chưa được
+                                            nhập</div>
+                                        <div *ngIf="loginForm.get('Password').hasError('minlength')">Mật khẩu phải ít
+                                            nhất 8 ký tự</div>
                                     </div>
                                 </div>
                                 <div class="text-center">
-                                    <button type="submit" class="btn btn-simple btn-wd btn-lg">Đăng nhập</button>
+                                    <button type="submit" class="btn btn-simple btn-wd btn-lg" (click)="onSubmit()">Đăng
+                                        nhập</button>
                                 </div>
                             </div>
                         </form>

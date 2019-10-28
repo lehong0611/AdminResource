@@ -12,8 +12,11 @@ export class Order {
     service: string
     note: string
     createdUserId: number
-    createdUserName: string
-    customerPhone: string
+    // createdUserName: string
+    // customerPhone: string
+    guestName: string
+    guestPhone: string
+    guestAddress: string
     createdTime: string
     acceptUserId: number
     shipperTaken: number
@@ -23,4 +26,5 @@ export class Order {
     estimateTime: string
     reasonReject: string
     total: number
+    reassignAgencyId: number
 }

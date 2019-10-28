@@ -1,16 +1,13 @@
 import { Routes } from '@angular/router';
 
-import { DashboardComponent } from '../../dashboard/dashboard.component';
 import { UserProfileComponent } from '../../user-profile/user-profile.component';
-import { TableListComponent } from '../../table-list/table-list.component';
-import { MapsComponent } from '../../maps/maps.component';
-import { NotificationsComponent } from '../../notifications/notifications.component';
 import { ManageAgencyComponent } from '../../manage-agency/manage-agency.component';
 import { ManageCustomerComponent } from '../../manage-customer/manage-customer.component';
 import { ManageEmployeeComponent } from '../../manage-employee/manage-employee.component';
 import { ManageOrderComponent } from '../../manage-order/manage-order.component';
 import { StatisticComponent } from '../../statistic/statistic.component';
 import { ManageFeeComponent } from '../../manage-fee/manage-fee.component';
+import { ManageShipperComponent } from '../../manage-shipper/manage-shipper.component';
 
 export const AdminLayoutRoutes: Routes = [
     { path: 'manage-agency',    component: ManageAgencyComponent },
@@ -19,9 +16,6 @@ export const AdminLayoutRoutes: Routes = [
     { path: 'manage-order',     component: ManageOrderComponent },
     { path: 'statistic',        component: StatisticComponent },
     { path: 'manage-fee',       component: ManageFeeComponent },
-    { path: 'dashboard',        component: DashboardComponent },
+    { path: 'manage-shipper',       component: ManageShipperComponent },
     { path: 'user-profile',     component: UserProfileComponent },
-    { path: 'table-list',       component: TableListComponent },
-    { path: 'maps',             component: MapsComponent },
-    { path: 'notifications',    component: NotificationsComponent },
 ];

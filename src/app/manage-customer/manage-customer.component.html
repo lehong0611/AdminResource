@@ -9,40 +9,40 @@
           <div class="card-content">
             <h4 class="card-title card-title-custome">Danh sách khách hàng</h4>
             <div class="material-datatables table-responsive">
-              <table id="datatables" class="table table-striped table-no-bordered table-hover dtr-inline"
-                cellspacing="0" width="100%" style="width:100%">
+              <table class="table row-border table-hover dtr-inline"
+                cellspacing="0" style="width:100%" datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger">
                 <thead>
                   <tr>
-                    <th [hidden]="true">{{ dataTable.headerRow[0] }}</th>
-                    <th>{{ dataTable.headerRow[1] }}</th>
-                    <th>{{ dataTable.headerRow[2] }}</th>
-                    <th>{{ dataTable.headerRow[3] }}</th>
-                    <th>{{ dataTable.headerRow[4] }}</th>
-                    <th>{{ dataTable.headerRow[5] }}</th>
-                    <th>{{ dataTable.headerRow[6] }}</th>
-                    <th class="disabled-sorting text-center">{{ dataTable.headerRow[7] }}</th>
+                    <th [hidden]="true">Id</th>
+                    <th>Họ và tên</th>
+                    <th>Tên đăng nhập</th>
+                    <th>Email</th>
+                    <th>SĐT</th>
+                    <th>Địa chỉ</th>
+                    <th>Trạng thái</th>
+                    <th class="text-center"></th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr *ngFor="let row of dataTable.dataRows">
-                    <td [hidden]="true">{{row['id']}}</td>
-                    <td>{{row['fullname']}}</td>
-                    <td>{{row['username']}}</td>
-                    <td>{{row['email']}}</td>
-                    <td>{{row['address']}}</td>
-                    <td>{{row['phone']}}</td>
-                    <td>{{row['active']? 'Active':'Block'}}</td>
+                  <tr *ngFor="let customer of listCustomer">
+                    <td [hidden]="true">{{customer.CusId}}</td>
+                    <td>{{customer.FullName}}</td>
+                    <td>{{customer.UserName}}</td>
+                    <td>{{customer.Email}}</td>
+                    <td>{{customer.Phone}}</td>
+                    <td>{{customer.Address.name}}</td>
+                    <td>{{customer.Active ? 'Active':'Block'}}</td>
                     <td class="text-center">
                       <button class="btn btn-link btn-info btn-just-icon edit" matTooltip="Xem ảnh"
-                        [matTooltipPosition]="'left'">
+                        [matTooltipPosition]="'left'" [disabled]="!customer.image" (click)="viewEmpImg(customer.Image)">
                         <i class="material-icons">photo_library</i>
                       </button>
                       <button class="btn btn-link btn-success btn-just-icon remove" matTooltip="Dừng hoạt động"
-                        [matTooltipPosition]="'left'" *ngIf="row['active']">
+                        [matTooltipPosition]="'left'" *ngIf="customer.Active" (click)="stopCustomer(customer)">
                         <i class="material-icons">lock_outline</i>
                       </button>
                       <button class="btn btn-link btn-success btn-just-icon remove" matTooltip="Mở hoạt động"
-                        [matTooltipPosition]="'left'" *ngIf="row['active']==false">
+                        [matTooltipPosition]="'left'" *ngIf="customer.Active==false" (click)="stopCustomer(customer)">
                         <i class="material-icons">lock_open</i>
                       </button>
                     </td>
@@ -58,5 +58,13 @@
       <!-- end col-md-12 -->
     </div>
     <!-- end row -->
+    <ng-template #img>
+      <button class="btn btn-link btn-danger btn-just-icon close-img" (click)="closeModalImg()">
+        <i class="material-icons">close</i>
+      </button>
+      <div class="img-contain">
+        <img [src]="url" class="emp-img">
+      </div>
+    </ng-template>
   </div>
 </div>

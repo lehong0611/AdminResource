@@ -1,14 +1,10 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatDialog, MatDialogConfig } from '@angular/material';
-import Swal from 'sweetalert2'
-
-import { Customer } from '../models/customer.model';
-
-declare interface DataTable {
-  headerRow: string[];
-  dataRows: Customer[];
-}
+import { Component, OnInit, TemplateRef, ViewChild, ChangeDetectorRef, OnDestroy } from '@angular/core';
+import { FormGroup } from '@angular/forms';
+import { Subject } from 'rxjs';
+import { DataTableDirective } from 'angular-datatables';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { MatDialog } from '@angular/material';
+import { CustomerService } from 'app/services/customer.service';
 
 declare const $: any;
 
@@ -17,59 +13,58 @@ declare const $: any;
   templateUrl: './manage-customer.component.html',
   styleUrls: ['./manage-customer.component.scss']
 })
-export class ManageCustomerComponent implements OnInit, AfterViewInit {
+export class ManageCustomerComponent implements OnInit, OnDestroy {
 
-  public dataTable: DataTable;
-  listCustomer: Customer[];
+  // Setting datatables
+  @ViewChild(DataTableDirective, { static: false }) dtElement: DataTableDirective;
+  dtOptions: DataTables.Settings = {};
+  dtTrigger: Subject<any> = new Subject();
+
+  @ViewChild('img', { static: true }) img: TemplateRef<any>
+
+  listCustomer: any[];
   addForm: FormGroup;
   isUpdate: boolean;
   hide: boolean;
+  url: string;
 
-  constructor() { }
+  constructor(private cusService: CustomerService,
+    private chRef: ChangeDetectorRef,
+    private spinner: NgxSpinnerService,
+    private dialog: MatDialog) { }
 
   ngOnInit() {
-    this.listCustomer = [
-      {
-        id: 1,
-        fullname: 'Trần Thị Minh',
-        image: '',
-        phone: '096936396',
-        username: 'ttm',
-        email: 'minh@yopmail.com',
-        password: '12345678',
-        address: 'Ngõ 165, phố chợ Khâm Thiên, Đống Đa, Hà Nội',
-        active: true
-      },
-      {
-        id: 2,
-        fullname: 'Trần Thị Huyền',
-        image: '',
-        phone: '096936396',
-        username: 'ttm',
-        email: 'huyen@yopmail.com',
-        password: '12345678',
-        address: 'Ngõ 165, phố chợ Khâm Thiên, Đống Đa, Hà Nội',
-        active: false
-      }
-    ]
-    this.dataTable = {
-      headerRow: [
-        'Mã khách hàng', 'Họ và tên', 'Tên đăng nhập', 'Email', 'Địa chỉ', 'SĐT', 'Trạng thái', ''
-      ],
-      dataRows: this.listCustomer
-    };
+    this.getAllCustomer();
+    this.initTable();
   }
 
-  ngAfterViewInit() {
-    $('#datatables').DataTable({
+  getAllCustomer() {
+    this.cusService.getAllCus().subscribe((res: any) => {
+      this.listCustomer = res.results;
+      this.chRef.detectChanges();
+      this.dtTrigger.next();
+      console.log(this.listCustomer);
+    }, err => {
+      console.log(err);
+    });
+  }
+
+  rerender() {
+    this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+      // Destroy the table first in the current context
+      dtInstance.destroy();
+
+      // Call the dtTrigger to rerender again
+      this.dtTrigger.next();
+
+    });
+  }
+
+  initTable() {
+    this.dtOptions = {
       'pagingType': 'full_numbers',
-      'lengthMenu': [[10, 25, 50, -1], [10, 25, 50, 'All']],
-      'order': [[0, 'desc']],
-      'columnDefs': [{
-        'targets': [1, 2, 3, 4, 5, 6, 7], /* column index */
-        'orderable': false, /* true or false */
-      },
-    ],
+      'lengthChange': false,
+      'ordering': false,
       'createdRow': function (row, data, dataIndex) {
         if (data[6] === 'Active') {
           $(row).css('background-color', '#fff');
@@ -80,12 +75,51 @@ export class ManageCustomerComponent implements OnInit, AfterViewInit {
       'info': false,
       responsive: true,
       language: {
-        search: '_INPUT_',
-        searchPlaceholder: 'Tìm kiếm khách hàng',
+        search: 'Tìm kiếm',
         emptyTable: 'Không có dữ liệu',
-        lengthMenu: 'Hiển thị _MENU_ bản ghi',
-        zeroRecords: 'Không có bản ghi nào phù hợp'
+        zeroRecords: 'Không có bản ghi nào được tìm thấy'
       }
+    };
+  }
+
+  ngOnDestroy() {
+    // Do not forget to unsubscribe
+    this.dtTrigger.unsubscribe();
+  }
+
+  stopCustomer(cus) {
+    this.spinner.show();
+    const statusCus = {
+      FullName: cus.FullName,
+      UserName: cus.UserName,
+      Phone: cus.Phone,
+      Address: cus.Address,
+      Active: !cus.Active,
+      Password: cus.Password
+    }
+    this.cusService.updateCus(cus.CusId, statusCus).subscribe(res => {
+      this.cusService.getAllCus().subscribe((updateList: any) => {
+        this.spinner.hide();
+        this.listCustomer = updateList.results;
+        this.rerender();
+      });
+      console.log('Change status successfully!');
+    }, err => {
+      console.log('Update fail');
     });
+  }
+
+  viewEmpImg(image: string) {
+    this.url = image;
+    this.dialog.open(this.img, {
+      width: '50%',
+      height: '85%',
+      autoFocus: true,
+      disableClose: true
+    });
+  }
+
+  closeModalImg() {
+    this.dialog.closeAll();
   }
 }

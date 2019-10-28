@@ -4,20 +4,20 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DataTablesModule } from 'angular-datatables';
 import { ChartsModule } from 'ng2-charts';
+import { NgxSpinnerModule } from 'ngx-spinner';
 import { MaterialModule } from '../../material.module';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { MomentModule } from 'ngx-moment';
 
 import { AdminLayoutRoutes } from './admin-layout.routing';
-import { DashboardComponent } from '../../dashboard/dashboard.component';
 import { UserProfileComponent } from '../../user-profile/user-profile.component';
-import { TableListComponent } from '../../table-list/table-list.component';
-import { MapsComponent } from '../../maps/maps.component';
-import { NotificationsComponent } from '../../notifications/notifications.component';
 import { ManageAgencyComponent } from '../../manage-agency/manage-agency.component';
 import { ManageCustomerComponent } from '../../manage-customer/manage-customer.component';
 import { ManageEmployeeComponent } from '../../manage-employee/manage-employee.component';
 import { ManageOrderComponent } from '../../manage-order/manage-order.component';
 import { StatisticComponent } from '../../statistic/statistic.component';
 import { ManageFeeComponent } from '../../manage-fee/manage-fee.component';
+import { ManageShipperComponent } from '../../manage-shipper/manage-shipper.component';
 
 @NgModule({
   imports: [
@@ -27,20 +27,20 @@ import { ManageFeeComponent } from '../../manage-fee/manage-fee.component';
     ReactiveFormsModule,
     DataTablesModule,
     ChartsModule,
-    MaterialModule
+    NgxSpinnerModule,
+    MaterialModule,
+    NgbModule,
+    MomentModule
   ],
   declarations: [
-    DashboardComponent,
     UserProfileComponent,
-    TableListComponent,
-    MapsComponent,
-    NotificationsComponent,
     ManageAgencyComponent,
     ManageEmployeeComponent,
     ManageCustomerComponent,
     ManageOrderComponent,
     StatisticComponent,
-    ManageFeeComponent
+    ManageFeeComponent,
+    ManageShipperComponent
   ],
 })
 

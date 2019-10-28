@@ -1,5 +1,9 @@
 @import '../../assets/scss/material-dashboard.scss';
 
+.material-icons {
+    color: #13CE95;
+}
+
 .wrapper {
     position: relative;
     top: 0;
@@ -113,8 +117,8 @@
             }
         }
 
-        [data-background-color="rose"] {
-            background: linear-gradient(60deg, $pink-400, $pink-600);
+        [data-background-color="green"] {
+            background: #13CE95;
             @include shadow-big-color($brand-rose);
         }
 
@@ -131,11 +135,11 @@
         }
 
         .btn.btn-simple {
-            background-color: transparent;
-            color: #e91e63;
+            background-color: #13CE95;
+            color: #fff;
             min-width: 180px;
             margin: 25px 0 0 0;
-            border: 1px #e91e63;
+            border: 1px #13CE95;
         }
 
         .error {
@@ -163,6 +167,10 @@
     border: 0;
     background: transparent;
     padding: 6px 15px 0px;
+}
+
+.input-group .form-control {
+    background-image: linear-gradient(to top, #13CE95 2px, rgba(156, 39, 176, 0) 2px), linear-gradient(to top, #d2d2d2 1px, rgba(210, 210, 210, 0) 1px)
 }
 
 
