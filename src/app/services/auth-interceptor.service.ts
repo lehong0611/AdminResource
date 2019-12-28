@@ -1,31 +1,39 @@
 import { Injectable } from '@angular/core';
 import { HttpInterceptor, HttpHandler, HttpRequest, HttpErrorResponse } from '@angular/common/http';
-import { catchError, filter, take, switchMap } from 'rxjs/operators';
-import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import { throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
-export class AuthInterceptorService implements HttpInterceptor{
+export class AuthInterceptorService implements HttpInterceptor {
 
   constructor() { }
 
   intercept(req: HttpRequest<any>, next: HttpHandler) {
-    const token: string = localStorage.getItem('token');
-    if (token) {
-      req = req.clone({
-        setHeaders: {
-          Authorization: token
-        }
-      });
+    let headers: any;
+    const token: string = localStorage.getItem('token-admin');
+    let noAuth = req.headers.get('no-token');
+    if (noAuth) {
+      headers = new Headers();
+    } else {
+      if (token) {
+        req = req.clone({
+          setHeaders: {
+            Authorization: token
+          }
+        });
+      }
     }
 
-    if (!req.headers.has('Content-Type')) {
-      req = req.clone({
-        setHeaders: {
-          'content-type': 'application/json'
-        }
-      });
+    if (!(req.body instanceof FormData)) {
+      if (!req.headers.has('Content-Type')) {
+        req = req.clone({
+          setHeaders: {
+            'content-type': 'application/json'
+          }
+        });
+      }
     }
 
     req = req.clone({

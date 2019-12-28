@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, RouterState, RouterStateSnapshot } from '@angular/router';
+import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { UserService } from 'app/services/user.service';
-import { NgxSpinnerService } from 'ngx-spinner';
 
 @Component({
   selector: 'app-login',
@@ -13,7 +12,6 @@ import { NgxSpinnerService } from 'ngx-spinner';
 export class LoginComponent implements OnInit {
 
   loginForm: FormGroup;
-  userSuper: boolean;
 
   // tslint:disable-next-line: max-line-length
   emailValidate = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
@@ -22,8 +20,7 @@ export class LoginComponent implements OnInit {
     private router: Router,
     private formBuilder: FormBuilder,
     private toastr: ToastrService,
-    private userService: UserService,
-    private spinner: NgxSpinnerService) { }
+    private userService: UserService) { }
 
   ngOnInit() {
     this.loginForm = this.formBuilder.group({
@@ -37,21 +34,17 @@ export class LoginComponent implements OnInit {
   }
 
   onSubmit() {
-    console.log(this.loginForm.value);
     if (this.loginForm.invalid) {
       this.toastr.error('Email hoặc mật khẩu không chính xác!', 'Thất bại');
       return;
     }
     this.userService.login(this.loginForm.value.Email, this.loginForm.value.Password).subscribe(
       data => {
-        console.log(data);
         if (data.status === 1) {
           console.log('Logged in');
-          console.log(data);
           localStorage.setItem('role', data.results.role);
           if (data.results.role === 'major') {
             this.router.navigate(['/manage-agency']);
-            this.spinner.show();
           } else if (data.results.role === 'minor') {
             this.router.navigate(['/manage-order']);
           } else {

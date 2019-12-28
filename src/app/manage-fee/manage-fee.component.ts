@@ -4,8 +4,6 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { DataTableDirective } from 'angular-datatables';
 import { NgxSpinnerService } from 'ngx-spinner';
-
-import { Fee } from '../models/fee.model';
 import { Subject } from 'rxjs';
 import { FeeService } from 'app/services/fee.service';
 
@@ -125,7 +123,7 @@ export class ManageFeeComponent implements OnInit, OnDestroy {
     })
   }
 
-  openDialogAdd(item: any) {
+  openDialogAdd(item?: any) {
     this.isUpdate = false;
     if (item) {
       this.isUpdate = true;

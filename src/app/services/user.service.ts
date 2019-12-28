@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { tap, catchError } from 'rxjs/operators';
 
 @Injectable({
@@ -19,8 +19,8 @@ export class UserService {
     return this.http.get(`${this.baseUrl}/users`);
   }
 
-  getAllUserByRole(id, role) {
-    return this.http.get(`${this.baseUrl}/allShipper?AgencyId=${id}&Role=${role}`);
+  getAllUserByRole(role) {
+    return this.http.get(`${this.baseUrl}/allShipper?Role=${role}`);
   }
 
   getAllStaff() {
@@ -28,6 +28,7 @@ export class UserService {
   }
 
   addNewEmp(params) {
+    console.log(params);
     return this.http.post(`${this.baseUrl}/createEmployee`, params);
   }
 
@@ -40,10 +41,12 @@ export class UserService {
   }
 
   postFile(fileToUpload: File) {
+    let headers = new HttpHeaders();
+    headers.append('no-token', 'true');
     const endpoint = `${this.baseUrl}/upload`;
     const formData: FormData = new FormData();
     formData.append('file', fileToUpload, fileToUpload.name);
-    return this.http.post(endpoint, formData);
+    return this.http.post(endpoint, formData, {headers: headers});
   }
 
   login(email, password) {
@@ -53,7 +56,8 @@ export class UserService {
           if (res.status === 0) {
             return res;
           } else {
-            localStorage.setItem('token', res.results.token);
+            localStorage.setItem('token-admin', res.results.token);
+            localStorage.setItem('userRole', res.results.role);
             this.token = res.results.token;
             this.isLoggedIn = true;
             return true;
@@ -75,5 +79,9 @@ export class UserService {
     } else {
       this.isLoggedIn = false;
     }
+  }
+
+  getDetailAccount() {
+    return this.http.get(`${this.baseUrl}/detailEmployee`);
   }
 }

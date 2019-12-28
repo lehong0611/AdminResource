@@ -1,32 +1,8 @@
 @import '../../assets/scss/material-dashboard.scss';
 
 .card.card-manage {
-    [data-background-color] {
-        margin: -20px 15px 0;
-        border-radius: 3px;
-        padding: 15px;
-        position: absolute;
-    }
-
-    [data-background-color="purple"] {
-        background: linear-gradient(60deg, $purple-400, $purple-600);
-        @include shadow-big-color($brand-primary);
-    }
-
-    .card-header.card-header-icon {
-        float: left;
-
-        i {
-            width: 33px;
-            height: 33px;
-            text-align: center;
-            line-height: 33px;
-        }
-    }
 
     .card-content {
-        padding: 15px 20px;
-        position: relative;
 
         .row {
             &.empty-order {
@@ -35,10 +11,10 @@
 
             .col-md-3 {
                 .card {
-                    border: 1px solid #00bcd4;
+                    border: 1px solid #13CE95;
 
                     .card-header {
-                        border-bottom: 1px solid #00bcd4;
+                        border-bottom: 1px solid #13CE95;
                         padding: 5px;
                         color: #444868;
 
@@ -49,9 +25,9 @@
 
                     .card-body {
 
-                        &.account {
-                            background: #f0f8ff
-                        }
+                        // &.account {
+                        //     background: #f0f8ff
+                        // }
 
                         .wrapper-info {
                             display: flex;
@@ -64,6 +40,7 @@
                             .material-icons {
                                 font-size: 20px;
                                 margin: 0 12px 0 0;
+                                color: #13CE95;
                             }
 
                             .empty-money {
@@ -73,7 +50,7 @@
                     }
 
                     .card-footer {
-                        border-top: 1px solid #00bcd4;
+                        border-top: 1px solid #13CE95;
 
                         .btn {
                             padding: 9px 9px;
@@ -98,7 +75,7 @@
             color: #000;
 
             &.active {
-                background: #00bcd4;
+                background: #13CE95;
                 color: #fff;
             }
         }
@@ -192,6 +169,13 @@
                     margin-bottom: 0;
                     font-weight: 600;
                     margin-right: 15px;
+                }
+            }
+
+            .service {
+                .mat-radio-group {
+                    display: flex;
+                    flex-direction: column;
                 }
             }
         }

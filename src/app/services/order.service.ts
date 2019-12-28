@@ -11,8 +11,8 @@ export class OrderService {
 
   constructor(private http: HttpClient) { }
 
-  getOrdersByStatus(status, createdId, pageNum, pageSize, agencyId) {
-    return this.http.get(`${this.getOrderUrl}?OrderStatus=${status}&CreatedUserId=${createdId}&page=${pageNum}&pageSize=${pageSize}&AcceptAdminId=${agencyId}`);
+  getOrdersByStatus(status, pageNum, pageSize) {
+    return this.http.get(`${this.getOrderUrl}?OrderStatus=${status}&page=${pageNum}&pageSize=${pageSize}`);
   }
 
   addNewOrder(params) {
@@ -24,6 +24,10 @@ export class OrderService {
   }
 
   findOrderByCode(id) {
-    return this.http.get(`${this.baseUrl}/getOrderInfoById?_id=${id}`);
+    return this.http.get(`${this.baseUrl}/getOrderInfoById/${id}`);
+  }
+
+  getReport(param) {
+    return this.http.post(`${this.baseUrl}/report`, param);
   }
 }

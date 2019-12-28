@@ -1,385 +1,402 @@
-<div class="main-content">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-md-12">
-        <div class="card card-manage">
-          <div class="card-header card-header-icon" data-background-color="purple">
-            <i class="material-icons">assignment</i>
-          </div>
-          <div class="card-content">
-            <div class="button mt-5">
-              <div class="search">
-                <input type="text" [formControl]="search">
-                <button class="btn btn-info" (click)="searchOrder()">
-                  <i class="material-icons">search</i>
-                </button>
+<div class="wrapper">
+  <div class="sidebar" data-color="danger" data-background-color="white" data-image="./assets/img/sidebar-1.jpg">
+    <app-sidebar></app-sidebar>
+    <div class="sidebar-background" style="background-image: url(./assets/img/sidebar-4.jpg)"></div>
+  </div>
+  <div class="main-panel">
+    <div class="main-content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="card card-manage">
+              <div class="card-header card-header-icon" data-background-color="purple">
+                <i class="material-icons">assignment</i>
               </div>
-              <div class="toolbar">
-                <button class="btn btn-info" (click)="onAddOrderModal()" matTooltip="Thêm mới đơn hàng"
-                  [matTooltipPosition]="'left'">
-                  <i class="material-icons">add_box</i>
-                </button>
-                <button class="btn btn-success" (click)="openAssignedShipper()" [disabled]="listSelected.length === 0"
-                  matTooltip="Phân ĐH cho shipper" [matTooltipPosition]="'left'">
-                  <i class="material-icons">local_shipping</i>
-                </button>
-                <button class="btn btn-success" (click)="openAssignedAgency()" [disabled]="listSelected.length === 0"
-                  matTooltip="Chuyển tiếp đại lý" [matTooltipPosition]="'left'">
-                  <i class="material-icons">store_mall_directory</i>
-                </button>
+              <div class="card-content">
+                <div class="button mt-5">
+                  <div class="search">
+                    <input type="text" [formControl]="search">
+                    <button class="btn btn-info" (click)="searchOrder()">
+                      <i class="material-icons">search</i>
+                    </button>
+                  </div>
+                  <div class="toolbar">
+                    <button class="btn btn-info" (click)="onAddOrderModal()" matTooltip="Thêm mới đơn hàng"
+                      [matTooltipPosition]="'left'">
+                      <i class="material-icons">add_box</i>
+                    </button>
+                    <button class="btn btn-success" (click)="openAssignedShipper()"
+                      [disabled]="listSelected.length === 0" matTooltip="Phân ĐH cho shipper"
+                      [matTooltipPosition]="'left'">
+                      <i class="material-icons">local_shipping</i>
+                    </button>
+                    <!-- <button class="btn btn-success" (click)="openAssignedAgency()"
+                      [disabled]="listSelected.length === 0" matTooltip="Chuyển tiếp đại lý"
+                      [matTooltipPosition]="'left'">
+                      <i class="material-icons">store_mall_directory</i>
+                    </button> -->
+                  </div>
+                </div>
+                <ul class="nav nav-pills mt-5" role="tablist">
+                  <li class="nav-item" *ngFor="let pill of listTabs, let i = index" (click)=changeTab(pill.key)>
+                    <a class="nav-link" [ngClass]="{'active': pill.key === initStatus }" data-toggle="pill"
+                      href="#tab-{{i}}" role="tab">{{pill.text}}
+                    </a>
+                  </li>
+                </ul>
+                <ngx-spinner [fullScreen]="true" type="ball-clip-rotate-multiple" size="medium">
+                  <p class="loading">Loading ...</p>
+                </ngx-spinner>
+                <div class="tab-content">
+                  <div class="tab-pane fade"
+                    [ngClass]="{'active': pill.key === initStatus, 'show': pill.key === initStatus }" id="tab-{{i}}"
+                    *ngFor="let pill of listTabs, let i = index">
+                    <div class="row mt-2" [ngClass]="{'empty-order': listOrder.length <= 0}">
+                      <div class="col-md-3 card-deck" *ngFor="let order of listOrder">
+                        <div class="card">
+                          <div class="card-header text-center font-weight-bolder"
+                            [ngClass]="{'bg-customer': order.isCustomer}">{{order._id}}
+                          </div>
+                          <div class="card-body" [ngClass]="{'account': order.CreatedUserId !== accountId}">
+                            <div class="wrapper-info mb-3">
+                              <i class="material-icons">person</i>
+                              <span>{{order.SenderName}}</span>
+                            </div>
+                            <div class="wrapper-info mb-3">
+                              <i class="material-icons">public</i>
+                              <span>{{order.Service === 'Chuẩn' ? 'Giao hàng thường': 'Giao hàng nhanh'}}</span>
+                            </div>
+                            <div class="wrapper-info mb-3">
+                              <i class="material-icons">hourglass_full</i>
+                              <span style="font-weight: 700;">{{bindingTextStatus(order.OrderStatus.name)}}</span>
+                            </div>
+                            <div class="wrapper-info mb-3">
+                              <i class="material-icons">list_alt</i>
+                              <span>{{bindKindOrder(order.Kind)}}</span>
+                            </div>
+                            <div class="wrapper-info mb-3">
+                              <i class="material-icons">list_alt</i>
+                              <span>{{order.Weight}} Kg</span>
+                            </div>
+                            <div class="wrapper-info mb-3">
+                              <i class="material-icons">account_balance_wallet </i>
+                              <span>{{order.Cost}} VNĐ</span>
+                            </div>
+                            <div class="wrapper-info mb-3">
+                              <i class="material-icons">access_time</i>
+                              <span>{{order.CreatedTime | amDateFormat: 'DD/MM/YYYY, h:mm a' }}</span>
+                            </div>
+                            <div class="wrapper-info last-info">
+                              <i class="material-icons">account_balance_wallet </i>
+                              <span>{{order.OrderStatus.name === 'waiting' ? 0: order.TransportCharge}} VNĐ</span>
+                            </div>
+                          </div>
+                          <div class="card-footer">
+                            <button class="btn btn-info" (click)="onDetailOrder(order)" style="background: #13CE95">Chi tiết</button>
+                            <button class="btn btn-info" (click)="openModalAccept(order, false)"
+                              *ngIf="order.OrderStatus.name === 'waiting'">
+                              <mat-icon>done</mat-icon>
+                            </button>
+                            <button class="btn btn-info" (click)="openModalAccept(order, true)"
+                              *ngIf="order.OrderStatus.name === 'waiting'">
+                              <mat-icon>close</mat-icon>
+                            </button>
+                            <mat-checkbox
+                              *ngIf="order.OrderStatus.name === 'available' || order.OrderStatus.name === 'wait-trans'"
+                              [formControl]="isSelected" [value]="order"
+                              (change)="selectedOrder(order, isSelected.value)">
+                            </mat-checkbox>
+                            <mat-checkbox *ngIf="order.OrderStatus.name === 'unavailable'" [formControl]="isSelected"
+                              [value]="order" (change)="selectedOrder(order, isSelected.value)"
+                              [disabled]="order.ShipperGetOrderId && order.ShipperGetOrderId !== null">
+                            </mat-checkbox>
+                          </div>
+                        </div>
+                      </div>
+                      <p class="text-center" *ngIf="listOrder.length <= 0">Chưa có đơn hàng</p>
+                    </div>
+                    <ngb-pagination class="d-flex justify-content-end mt-5" [collectionSize]="totalCount"
+                      [(page)]="page" [pageSize]="pageSize" [disabled]="totalCount === 0"
+                      (pageChange)="pageChange($event, pill.key)">
+                    </ngb-pagination>
+                  </div>
+                </div>
               </div>
             </div>
-            <ul class="nav nav-pills mt-5" role="tablist">
-              <li class="nav-item" *ngFor="let pill of listTabs, let i = index" (click)=changeTab(pill.key)>
-                <a class="nav-link" [ngClass]="{'active': pill.key === initStatus }" data-toggle="pill"
-                  href="#tab-{{i}}" role="tab">{{pill.text}}
-                </a>
-              </li>
-            </ul>
-            <ngx-spinner [fullScreen]="true" type="ball-clip-rotate-multiple" size="medium">
-              <p class="loading">Loading ...</p>
-            </ngx-spinner>
-            <div class="tab-content">
-              <div class="tab-pane fade"
-                [ngClass]="{'active': pill.key === initStatus, 'show': pill.key === initStatus }" id="tab-{{i}}"
-                *ngFor="let pill of listTabs, let i = index">
-                <div class="row mt-2" [ngClass]="{'empty-order': listOrder.length <= 0}">
-                  <div class="col-md-3 card-deck" *ngFor="let order of listOrder">
-                    <div class="card">
-                      <div class="card-header text-center font-weight-bolder"
-                        [ngClass]="{'bg-customer': order.isCustomer}">{{order._id}}
-                      </div>
-                      <div class="card-body" [ngClass]="{'account': order.CreatedUserId !== accountId}">
-                        <div class="wrapper-info mb-3">
-                          <i class="material-icons">person</i>
-                          <span>{{order.SenderName}}</span>
-                        </div>
-                        <div class="wrapper-info mb-3">
-                          <i class="material-icons">public</i>
-                          <span>{{order.Service}}</span>
-                        </div>
-                        <div class="wrapper-info mb-3">
-                          <i class="material-icons">hourglass_full</i>
-                          <span>{{bindingTextStatus(order.OrderStatus.name)}}</span>
-                        </div>
-                        <div class="wrapper-info mb-3">
-                          <i class="material-icons">list_alt</i>
-                          <span>{{bindKindOrder(order.Kind)}}</span>
-                        </div>
-                        <div class="wrapper-info mb-3">
-                          <i class="material-icons">attach_money</i>
-                          <span>{{order.Cost}} VNĐ</span>
-                        </div>
-                        <div class="wrapper-info mb-3">
-                          <i class="material-icons">access_time</i>
-                          <span>{{order.CreatedTime | amDateFormat: 'DD/MM/YYYY, h:mm a' }}</span>
-                        </div>
-                        <div class="wrapper-info last-info">
-                          <i class="material-icons">account_balance_wallet </i>
-                          <span>{{order.OrderStatus.name === 'waiting' ? 0: order.TransportCharge}} VNĐ</span>
-                        </div>
-                      </div>
-                      <div class="card-footer">
-                        <button class="btn btn-info" (click)="onDetailOrder(order)">Chi tiết</button>
-                        <button class="btn btn-info" (click)="openModalAccept(order, false)"
-                          *ngIf="order.OrderStatus.name === 'waiting'">
-                          <mat-icon>done</mat-icon>
-                        </button>
-                        <button class="btn btn-info" (click)="openModalAccept(order, true)"
-                          *ngIf="order.OrderStatus.name === 'waiting'">
-                          <mat-icon>close</mat-icon>
-                        </button>
-                        <mat-checkbox
-                          *ngIf="order.OrderStatus.name === 'available' || order.OrderStatus.name === 'unavailable'"
-                          [formControl]="isSelected" [value]="order" (change)="selectedOrder(order, isSelected.value)"
-                          [disabled]="order.ShipperGetOrderId">
-                        </mat-checkbox>
-                      </div>
+          </div>
+        </div>
+
+        <!-- Modal show detail wating order -->
+        <ng-template #detailOrder>
+          <h1 mat-dialog-title class="text-center">#{{Order._id}}</h1>
+          <div mat-dialog-content class="add-order">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="info-user">
+                  <span class="before">Người gửi</span>
+                  <div class="input-info">
+                    <div class="detail-info">
+                      <i class="material-icons">person</i>
+                      <span>{{Order.SenderName}}</span>
+                    </div>
+                    <div class="detail-info">
+                      <i class="material-icons">ring_volume</i>
+                      <span>{{Order.SenderPhone}}</span>
+                    </div>
+                    <div class="detail-info">
+                      <i class="material-icons">map</i>
+                      <span>{{Order.SenderAddress}}</span>
                     </div>
                   </div>
-                  <p class="text-center" *ngIf="listOrder.length <= 0">Chưa có đơn hàng</p>
                 </div>
-                <ngb-pagination class="d-flex justify-content-end mt-5" [collectionSize]="totalCount" [(page)]="page"
-                  [pageSize]="pageSize" [disabled]="totalCount === 0" (pageChange)="pageChange($event, pill.key)">
-                </ngb-pagination>
+              </div>
+              <div class="col-md-6">
+                <div class="info-user">
+                  <span class="before">Người nhận</span>
+                  <div class="input-info">
+                    <div class="detail-info">
+                      <i class="material-icons">person</i>
+                      <span>{{Order.ReceiverName}}</span>
+                    </div>
+                    <div class="detail-info">
+                      <i class="material-icons">ring_volume</i>
+                      <span>{{Order.ReceiverPhone}}</span>
+                    </div>
+                    <div class="detail-info">
+                      <i class="material-icons">map</i>
+                      <span>{{Order.ReceiverAddress}}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="info-user">
+                  <span class="before">Gói hàng</span>
+                  <div class="input-info">
+                    <div class="detail-info">
+                      <i class="material-icons">local_offer</i>
+                      <span>{{Order.Weight}} Kg</span>
+                    </div>
+                    <div class="detail-info">
+                      <i class="material-icons">list_alt</i>
+                      <span>{{bindKindOrder(Order.Kind)}}</span>
+                    </div>
+                    <div class="detail-info">
+                      <i class="material-icons">public</i>
+                      <span>{{Order.Service === 'Chuẩn' ? 'Giao hàng thường': 'Giao hàng nhanh'}}</span>
+                    </div>
+                    <div class="detail-info">
+                      <i class="material-icons">attach_money</i>
+                      <span>{{Order.Cost}} VNĐ</span>
+                    </div>
+                    <div class="detail-info">
+                      <i class="material-icons">access_time</i>
+                      <span>{{Order.CreatedTime | amDateFormat: 'DD/MM/YYYY, h:mm a' }}</span>
+                    </div>
+                    <div class="detail-info" *ngIf="Order.OrderStatus.name !== 'waiting'">
+                      <i class="material-icons">account_balance_wallet </i>
+                      <span>{{Order.TransportCharge}} VNĐ</span>
+                    </div>
+                    <div class="detail-info" *ngIf="Order.Note">
+                      <i class="material-icons">speaker_notes</i>
+                      <span>{{Order.Note}}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="info-user">
+                  <span class="before">Trạng thái vận chuyển</span>
+                  <div class="input-info">
+                    <div class="detail-info">
+                      <i class="material-icons">hourglass_full</i>
+                      <span>{{bindingTextStatus(Order.OrderStatus.name)}}</span>
+                    </div>
+                    <div class="detail-info" *ngIf="Order.ShipperTransId">
+                      <p class="shipper">Mã nhân viên giao hàng:</p>
+                      <span>{{Order.ShipperTransId}}</span>
+                    </div>
+                    <div class="detail-info" *ngIf="Order.ShipperGetOrderId">
+                      <p class="shipper">Mã nhân viên lấy hàng:</p>
+                      <span>{{Order.ShipperGetOrderId}}</span>
+                    </div>
+                    <div class="detail-info" *ngIf="Order.OrderStatus.name !== 'waiting'">
+                      <i class="material-icons">date_range</i>
+                      <span>{{ Order.EstimatedTime | amDateFormat: 'DD/MM/YYYY' }}</span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+          <div mat-dialog-actions>
+            <button mat-button mat-raised-button mat-dialog-close class="btn btn-danger">Đóng</button>
+          </div>
+        </ng-template>
+        <!-- Modal add new order -->
+        <ng-template #addOrder>
+          <h1 mat-dialog-title class="text-center">Tạo mới đơn hàng</h1>
+          <div mat-dialog-content class="add-order">
+            <form [formGroup]="addForm">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="info-user">
+                    <span class="before">Người gửi</span>
+                    <div class="input-info">
+                      <mat-form-field>
+                        <input matInput placeholder="Họ và tên" formControlName="SenderName">
+                      </mat-form-field>
+                      <mat-form-field>
+                        <input matInput placeholder="Số điện thoại" formControlName="SenderPhone">
+                      </mat-form-field>
+                      <mat-form-field>
+                        <input matInput placeholder="Địa chỉ" formControlName="SenderAddress">
+                      </mat-form-field>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="info-user">
+                    <span class="before">Người nhận</span>
+                    <div class="input-info">
+                      <mat-form-field>
+                        <input matInput placeholder="Họ và tên" formControlName="ReceiverName">
+                      </mat-form-field>
+                      <mat-form-field>
+                        <input matInput placeholder="Số điện thoại" formControlName="ReceiverPhone">
+                      </mat-form-field>
+                      <mat-form-field>
+                        <input matInput placeholder="Địa chỉ" formControlName="ReceiverAddress">
+                      </mat-form-field>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="info-user">
+                    <span class="before">Gói hàng</span>
+                    <div class="input-info">
+                      <mat-form-field>
+                        <mat-label>Loại hàng*</mat-label>
+                        <mat-select formControlName="Kind">
+                          <mat-option *ngFor="let item of listKindOfOrder" [value]="item.value">
+                            {{item.text}}
+                          </mat-option>
+                        </mat-select>
+                      </mat-form-field>
+                      <mat-form-field>
+                        <input matInput placeholder="Khối lượng chính xác (ước tính)" type="number"
+                          formControlName="Weight">
+                        <span matSuffix>Kg</span>
+                      </mat-form-field>
+                      <mat-form-field>
+                        <input matInput placeholder="Giá trị gói hàng" type="number" class="money"
+                          formControlName="Cost">
+                        <span matSuffix>VNĐ</span>
+                      </mat-form-field>
+                      <div class="mb-2 service">
+                        <mat-label>Dịch vụ*</mat-label>
+                        <mat-radio-group formControlName="Service">
+                          <mat-radio-button value="Chuẩn">Giao hàng thường</mat-radio-button>
+                          <mat-radio-button value="Nhanh">Giao hàng nhanh</mat-radio-button>
+                        </mat-radio-group>
+                      </div>
+                      <mat-form-field>
+                        <input matInput placeholder="Ghi chú" type="text" formControlName="Note">
+                      </mat-form-field>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="info-user">
+                    <span class="before">Phí dịch vụ</span>
+                    <div class="input-info">
+                      <mat-form-field>
+                        <input matInput placeholder="Phí vận chuyển" type="number" class="money"
+                          formControlName="TransportCharge">
+                        <span matSuffix>VNĐ</span>
+                      </mat-form-field>
+                      <mat-form-field>
+                        <input matInput [matDatepicker]="picker" placeholder="Chọn ngày dự kiến"
+                          [formControl]="EstimatedTime">
+                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-datepicker #picker></mat-datepicker>
+                      </mat-form-field>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div mat-dialog-actions>
+            <button mat-button mat-raised-button class="btn btn-danger" (click)="closeDialogAdd()">Hủy</button>
+            <button mat-button mat-raised-button class="btn btn-primary save" align='end' (click)="saveNewOrder()"
+              [disabled]="!addForm.valid" *ngIf="!isUpdate">Lưu</button>
+          </div>
+        </ng-template>
+        <ng-template #addCharge>
+          <button class="btn btn-link btn-danger btn-just-icon" (click)="closeAcceptModal()">
+            <i class="material-icons">close</i>
+          </button>
+          <div mat-dialog-content>
+            <h5 *ngIf="!isReject">Khoảng cách giữa nơi gửi và nơi nhận: {{distance}} m</h5>
+            <mat-form-field class="example-form-field" *ngIf="!isReject">
+              <input matInput type="number" placeholder="Nhập phí vận chuyển" [formControl]="inputCharge">
+              <span matSuffix>VNĐ</span>
+            </mat-form-field>
+            <mat-form-field *ngIf="!isReject">
+              <input matInput [matDatepicker]="picker" placeholder="Chọn ngày dự kiến" [formControl]="EstimatedTime">
+              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+            <mat-form-field class="example-full-width" *ngIf="isReject">
+              <textarea matInput placeholder="Lý do từ chối" [formControl]="textReject"></textarea>
+            </mat-form-field>
+          </div>
+          <div mat-dialog-actions>
+            <button mat-button mat-raised-button class="btn btn-info" align='end' (click)="accept(isReject)">Hoàn
+              thành</button>
+          </div>
+        </ng-template>
+        <ng-template #selectedShipper>
+          <button class="btn btn-link btn-danger btn-just-icon" (click)="closeAcceptModal()">
+            <i class="material-icons">close</i>
+          </button>
+          <div mat-dialog-content>
+            <h5>Chọn shipper</h5>
+            <mat-form-field>
+              <input type="text" placeholder="Vui lòng chọn" aria-label="text" matInput [formControl]="formShipper"
+                [matAutocomplete]="auto">
+              <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete" [displayWith]="displayFn">
+                <mat-option *ngFor="let shipper of filteredOptions | async" [value]="shipper">
+                  {{shipper.FullName}}
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+          </div>
+          <div mat-dialog-actions>
+            <button mat-button mat-raised-button class="btn btn-info" align='end' (click)="assignedShipper()"
+              [disabled]="formShipper.invalid">Hoàn
+              thành</button>
+          </div>
+        </ng-template>
+        <!-- Assign order to other agency -->
+        <!-- <ng-template #assignAgency>
+          <button class="btn btn-link btn-danger btn-just-icon" (click)="closeAcceptModal()">
+            <i class="material-icons">close</i>
+          </button>
+          <div mat-dialog-content>
+            <h5>Nhập mã đại lý:</h5>
+            <mat-form-field>
+              <input matInput type="number" [formControl]="selectAgency">
+            </mat-form-field>
+          </div>
+          <div mat-dialog-actions>
+            <button mat-button mat-raised-button class="btn btn-info" align='end' (click)="assignToAnotherAgency()"
+              [disabled]="selectAgency.invalid">Hoàn
+              thành</button>
+          </div>
+        </ng-template> -->
       </div>
     </div>
-
-    <!-- Modal show detail wating order -->
-    <ng-template #detailOrder>
-      <h1 mat-dialog-title class="text-center">#{{Order._id}}</h1>
-      <div mat-dialog-content class="add-order">
-        <div class="row">
-          <div class="col-md-6">
-            <div class="info-user">
-              <span class="before">Người gửi</span>
-              <div class="input-info">
-                <div class="detail-info">
-                  <i class="material-icons">person</i>
-                  <span>{{Order.SenderName}}</span>
-                </div>
-                <div class="detail-info">
-                  <i class="material-icons">ring_volume</i>
-                  <span>{{Order.SenderPhone}}</span>
-                </div>
-                <div class="detail-info">
-                  <i class="material-icons">map</i>
-                  <span>{{Order.SenderAddress}}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="info-user">
-              <span class="before">Người nhận</span>
-              <div class="input-info">
-                <div class="detail-info">
-                  <i class="material-icons">person</i>
-                  <span>{{Order.ReceiverName}}</span>
-                </div>
-                <div class="detail-info">
-                  <i class="material-icons">ring_volume</i>
-                  <span>{{Order.ReceiverPhone}}</span>
-                </div>
-                <div class="detail-info">
-                  <i class="material-icons">map</i>
-                  <span>{{Order.ReceiverAddress}}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="info-user">
-              <span class="before">Gói hàng</span>
-              <div class="input-info">
-                <div class="detail-info">
-                  <i class="material-icons">local_offer</i>
-                  <span>{{Order.Weight}} Kg</span>
-                </div>
-                <div class="detail-info">
-                  <i class="material-icons">list_alt</i>
-                  <span>{{bindKindOrder(Order.Kind)}}</span>
-                </div>
-                <div class="detail-info">
-                  <i class="material-icons">public</i>
-                  <span>{{Order.Service}}</span>
-                </div>
-                <div class="detail-info">
-                  <i class="material-icons">attach_money</i>
-                  <span>{{Order.Cost}} VNĐ</span>
-                </div>
-                <div class="detail-info">
-                  <i class="material-icons">access_time</i>
-                  <span>{{Order.CreatedTime | amDateFormat: 'DD/MM/YYYY, h:mm a' }}</span>
-                </div>
-                <div class="detail-info" *ngIf="Order.OrderStatus.name !== 'waiting'">
-                  <i class="material-icons">account_balance_wallet </i>
-                  <span>{{Order.TransportCharge}} VNĐ</span>
-                </div>
-                <div class="detail-info" *ngIf="Order.Note">
-                  <i class="material-icons">speaker_notes</i>
-                  <span>{{Order.Note}}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="info-user">
-              <span class="before">Trạng thái vận chuyển</span>
-              <div class="input-info">
-                <div class="detail-info">
-                  <i class="material-icons">hourglass_full</i>
-                  <span>{{bindingTextStatus(Order.OrderStatus.name)}}</span>
-                </div>
-                <div class="detail-info" *ngIf="Order.ShipperTransId">
-                  <p class="shipper">Mã nhân viên giao hàng:</p>
-                  <span>{{Order.ShipperTransId}}</span>
-                </div>
-                <div class="detail-info" *ngIf="Order.ShipperGetOrderId">
-                  <p class="shipper">Mã nhân viên lấy hàng:</p>
-                  <span>{{Order.ShipperGetOrderId}}</span>
-                </div>
-                <div class="detail-info" *ngIf="Order.OrderStatus.name !== 'waiting'">
-                  <i class="material-icons">date_range</i>
-                  <span>{{ Order.EstimatedTime | amDateFormat: 'DD/MM/YYYY' }}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div mat-dialog-actions>
-        <button mat-button mat-raised-button mat-dialog-close class="btn btn-danger">Đóng</button>
-      </div>
-    </ng-template>
-    <!-- Modal add new order -->
-    <ng-template #addOrder>
-      <h1 mat-dialog-title class="text-center">Tạo mới đơn hàng</h1>
-      <div mat-dialog-content class="add-order">
-        <form [formGroup]="addForm">
-          <div class="row">
-            <div class="col-md-6">
-              <div class="info-user">
-                <span class="before">Người gửi</span>
-                <div class="input-info">
-                  <mat-form-field>
-                    <input matInput placeholder="Họ và tên" formControlName="SenderName">
-                  </mat-form-field>
-                  <mat-form-field>
-                    <input matInput placeholder="Số điện thoại" formControlName="SenderPhone">
-                  </mat-form-field>
-                  <mat-form-field>
-                    <input matInput placeholder="Địa chỉ" formControlName="SenderAddress">
-                  </mat-form-field>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="info-user">
-                <span class="before">Người nhận</span>
-                <div class="input-info">
-                  <mat-form-field>
-                    <input matInput placeholder="Họ và tên" formControlName="ReceiverName">
-                  </mat-form-field>
-                  <mat-form-field>
-                    <input matInput placeholder="Số điện thoại" formControlName="ReceiverPhone">
-                  </mat-form-field>
-                  <mat-form-field>
-                    <input matInput placeholder="Địa chỉ" formControlName="ReceiverAddress">
-                  </mat-form-field>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="info-user">
-                <span class="before">Gói hàng</span>
-                <div class="input-info">
-                  <mat-form-field>
-                    <mat-label>Loại hàng*</mat-label>
-                    <mat-select formControlName="Kind">
-                      <mat-option *ngFor="let item of listKindOfOrder" [value]="item.value">
-                        {{item.text}}
-                      </mat-option>
-                    </mat-select>
-                  </mat-form-field>
-                  <mat-form-field>
-                    <input matInput placeholder="Khối lượng chính xác (ước tính)" type="number"
-                      formControlName="Weight">
-                    <span matSuffix>Kg</span>
-                  </mat-form-field>
-                  <mat-form-field>
-                    <input matInput placeholder="Giá trị gói hàng" type="number" class="money" formControlName="Cost">
-                    <span matPrefix>$&nbsp;</span>
-                    <span matSuffix>VNĐ</span>
-                  </mat-form-field>
-                  <div class="mb-2 service">
-                    <mat-label>Dịch vụ*</mat-label>
-                    <mat-radio-group formControlName="Service">
-                      <mat-radio-button value="Chuẩn">Chuẩn</mat-radio-button>
-                      <mat-radio-button value="Nhanh">Nhanh</mat-radio-button>
-                    </mat-radio-group>
-                  </div>
-                  <mat-form-field>
-                    <input matInput placeholder="Ghi chú" type="text" formControlName="Note">
-                  </mat-form-field>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="info-user">
-                <span class="before">Phí dịch vụ</span>
-                <div class="input-info">
-                  <mat-form-field>
-                    <input matInput placeholder="Phí vận chuyển" type="number" class="money"
-                      formControlName="TransportCharge">
-                    <span matPrefix>$&nbsp;</span>
-                    <span matSuffix>VNĐ</span>
-                  </mat-form-field>
-                  <mat-form-field>
-                    <input matInput [matDatepicker]="picker" placeholder="Chọn ngày dự kiến"
-                    [formControl]="EstimatedTime">
-                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                    <mat-datepicker #picker></mat-datepicker>
-                  </mat-form-field>
-                </div>
-              </div>
-            </div>
-          </div>
-        </form>
-      </div>
-      <div mat-dialog-actions>
-        <button mat-button mat-raised-button class="btn btn-danger" (click)="closeDialogAdd()">Hủy</button>
-        <button mat-button mat-raised-button class="btn btn-primary save" align='end' (click)="saveNewOrder()"
-          [disabled]="!addForm.valid" *ngIf="!isUpdate">Lưu</button>
-      </div>
-    </ng-template>
-    <ng-template #addCharge>
-      <button class="btn btn-link btn-danger btn-just-icon" (click)="closeAcceptModal()">
-        <i class="material-icons">close</i>
-      </button>
-      <div mat-dialog-content>
-        <h5 *ngIf="!isReject">Khoảng cách giữa nơi gửi và nơi nhận: {{distance}} m</h5>
-        <mat-form-field class="example-form-field" *ngIf="!isReject">
-          <input matInput type="number" placeholder="Nhập phí vận chuyển" [formControl]="inputCharge">
-          <span matPrefix>$&nbsp;</span>
-          <span matSuffix>VNĐ</span>
-        </mat-form-field>
-        <mat-form-field *ngIf="!isReject">
-          <input matInput [matDatepicker]="picker" placeholder="Chọn ngày dự kiến" [formControl]="EstimatedTime">
-          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-          <mat-datepicker #picker></mat-datepicker>
-        </mat-form-field>
-        <mat-form-field class="example-full-width" *ngIf="isReject">
-          <textarea matInput placeholder="Lý do từ chối" [formControl]="textReject"></textarea>
-        </mat-form-field>
-      </div>
-      <div mat-dialog-actions>
-        <button mat-button mat-raised-button class="btn btn-info" align='end' (click)="accept(isReject)">Hoàn
-          thành</button>
-      </div>
-    </ng-template>
-    <ng-template #selectedShipper>
-      <button class="btn btn-link btn-danger btn-just-icon" (click)="closeAcceptModal()">
-        <i class="material-icons">close</i>
-      </button>
-      <div mat-dialog-content>
-        <h5>Chọn shipper</h5>
-        <mat-form-field>
-          <input type="text" placeholder="Vui lòng chọn" aria-label="text" matInput [formControl]="formShipper"
-            [matAutocomplete]="auto">
-          <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete" [displayWith]="displayFn">
-            <mat-option *ngFor="let shipper of filteredOptions | async" [value]="shipper">
-              {{shipper.FullName}}
-            </mat-option>
-          </mat-autocomplete>
-        </mat-form-field>
-      </div>
-      <div mat-dialog-actions>
-        <button mat-button mat-raised-button class="btn btn-info" align='end' (click)="assignedShipper()"
-          [disabled]="formShipper.invalid">Hoàn
-          thành</button>
-      </div>
-    </ng-template>
-    <!-- Assign order to other agency -->
-    <ng-template #assignAgency>
-      <button class="btn btn-link btn-danger btn-just-icon" (click)="closeAcceptModal()">
-        <i class="material-icons">close</i>
-      </button>
-      <div mat-dialog-content>
-        <h5>Nhập mã đại lý:</h5>
-        <mat-form-field>
-          <input matInput type="number" [formControl]="selectAgency">
-        </mat-form-field>
-      </div>
-      <div mat-dialog-actions>
-        <button mat-button mat-raised-button class="btn btn-info" align='end' (click)="assignToAnotherAgency()"
-          [disabled]="selectAgency.invalid">Hoàn
-          thành</button>
-      </div>
-    </ng-template>
   </div>
 </div>

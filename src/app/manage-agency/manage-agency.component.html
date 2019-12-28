@@ -1,116 +1,125 @@
-<div class="main-content">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-md-12">
-        <div class="card card-manage">
-          <div class="card-header card-header-icon" data-background-color="purple">
-            <i class="material-icons">assignment</i>
-          </div>
-          <div class="card-content">
-            <h4 class="card-title card-title-custome">Danh sách đại lý</h4>
-            <div class="toolbar" style="text-align: center">
-              <!--        Here you can write extra buttons/actions for the toolbar              -->
-              <button class="btn btn-primary add" (click)="openDialogAdd()">
-                <i class="material-icons">add_box</i>
-                <span style="margin-left: 10px">Thêm mới</span>
-              </button>
+<div class="wrapper">
+  <div class="sidebar" data-color="danger" data-background-color="white" data-image="./assets/img/sidebar-1.jpg">
+    <app-sidebar></app-sidebar>
+    <div class="sidebar-background" style="background-image: url(./assets/img/sidebar-4.jpg)"></div>
+  </div>
+  <div class="main-panel">
+    <div class="main-content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="card card-manage">
+              <div class="card-header card-header-icon" data-background-color="purple">
+                <i class="material-icons">assignment</i>
+              </div>
+              <div class="card-content">
+                <h4 class="card-title card-title-custome">Danh sách đại lý</h4>
+                <div class="toolbar" style="text-align: center">
+                  <button class="btn add" (click)="openDialogAdd()">
+                    <i class="material-icons">add_box</i>
+                    <span style="margin-left: 10px">Thêm mới</span>
+                  </button>
+                </div>
+                <ngx-spinner [fullScreen]="true" type="ball-clip-rotate-multiple" size="medium">
+                  <p class="loading">Loading ...</p>
+                </ngx-spinner>
+                <div class="material-datatables table-responsive">
+                  <table class="table row-border table-no-bordered table-hover dtr-inline" cellspacing="0"
+                    style="width:100%" datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger">
+                    <thead>
+                      <tr>
+                        <th>Id</th>
+                        <th>Tên đại lý</th>
+                        <th>SĐT</th>
+                        <th>Địa chỉ</th>
+                        <th>Admin</th>
+                        <th>Trạng thái</th>
+                        <th class="disabled-sorting text-center"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let agency of listAgency">
+                        <td>{{agency.brand.AgencyId}}</td>
+                        <td>{{agency.brand.AgencyName}}</td>
+                        <td>{{agency.brand.Phone}}</td>
+                        <td>{{agency.brand.Address.name}}</td>
+                        <td>{{agency.admin.FullName}}</td>
+                        <td>{{agency.brand.Active? 'Active' : 'Block'}}</td>
+                        <td class="text-center">
+                          <button class="btn btn-link btn-warning btn-just-icon edit" matTooltip="Sửa"
+                            [matTooltipPosition]="'left'" (click)="openDialogAdd(agency.brand)">
+                            <i class="material-icons">mode_edit</i>
+                          </button>
+                          <button class="btn btn-link btn-danger btn-just-icon remove"
+                            (click)="openDeleteDialog(agency.brand.AgencyId)" matTooltip="Xóa" [matTooltipPosition]="'left'">
+                            <i class="material-icons">close</i>
+                          </button>
+                          <button class="btn btn-link btn-success btn-just-icon" matTooltip="Dừng hoạt động"
+                            [matTooltipPosition]="'left'" *ngIf="agency.brand.Active" (click)="openStopDialog(agency)">
+                            <i class="material-icons">lock_outline</i>
+                          </button>
+                          <button class="btn btn-link btn-success btn-just-icon" matTooltip="Mở hoạt động"
+                            [matTooltipPosition]="'left'" *ngIf="!agency.brand.Active" (click)="openStopDialog(agency)">
+                            <i class="material-icons">lock_open</i>
+                          </button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <!-- end content-->
             </div>
-            <ngx-spinner [fullScreen]="true" type="ball-clip-rotate-multiple" size="medium">
-              <p class="loading">Loading ...</p>
-            </ngx-spinner>
-            <div class="material-datatables table-responsive">
-              <table class="table row-border table-no-bordered table-hover dtr-inline"
-                cellspacing="0" style="width:100%" datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger">
-                <thead>
-                  <tr>
-                    <th [hidden]='true'>Id</th>
-                    <th>Tên đại lý</th>
-                    <th>SĐT</th>
-                    <th>Địa chỉ</th>
-                    <th>Admin</th>
-                    <th>Trạng thái</th>
-                    <th class="disabled-sorting text-center"></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr *ngFor="let agency of listAgency">
-                    <td [hidden]='true'>{{agency.brand.AgencyId}}</td>
-                    <td>{{agency.brand.AgencyName}}</td>
-                    <td>{{agency.brand.Phone}}</td>
-                    <td>{{agency.brand.Address.name}}</td>
-                    <td>{{agency.admin.FullName}}</td>
-                    <td>{{agency.brand.Active? 'Active' : 'Block'}}</td>
-                    <td class="text-center">
-                      <button class="btn btn-link btn-warning btn-just-icon edit" matTooltip="Sửa"
-                        [matTooltipPosition]="'left'" (click)="openDialogAdd(agency)">
-                        <i class="material-icons">mode_edit</i>
-                      </button>
-                      <button class="btn btn-link btn-danger btn-just-icon remove" (click)="openDeleteDialog(agency)"
-                        matTooltip="Xóa" [matTooltipPosition]="'left'">
-                        <i class="material-icons">close</i>
-                      </button>
-                      <button class="btn btn-link btn-success btn-just-icon" matTooltip="Dừng hoạt động"
-                        [matTooltipPosition]="'left'" *ngIf="agency.Active" (click)="openStopDialog(agency)">
-                        <i class="material-icons">lock_outline</i>
-                      </button>
-                      <button class="btn btn-link btn-success btn-just-icon" matTooltip="Mở hoạt động"
-                        [matTooltipPosition]="'left'" *ngIf="!agency.Active" (click)="openStopDialog(agency)">
-                        <i class="material-icons">lock_open</i>
-                      </button>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+            <!--  end card  -->
           </div>
-          <!-- end content-->
+          <!-- end col-md-12 -->
         </div>
-        <!--  end card  -->
-      </div>
-      <!-- end col-md-12 -->
-    </div>
-    <!-- end row -->
-    <ng-template #addAgency>
-      <h1 mat-dialog-title class="text-center"> {{isUpdate==true?'Cập nhật': 'Tạo mới'}} đại lý </h1>
-      <div mat-dialog-content>
-        <form [formGroup]="addForm">
-          <mat-form-field>
-            <input matInput placeholder="Tên đại lý" formControlName="AgencyName">
-            <!-- <mat-error class="error-message"
-              *ngIf="addForm.get('name').hasError('required') && (addForm.get('name').dirty || addForm.get('name').touched)">
-              Không được bỏ trống trường này
-            </mat-error> -->
-          </mat-form-field>
-          <mat-form-field>
-            <input matInput placeholder="Số điện thoại" formControlName="Phone">
-          </mat-form-field>
-          <mat-form-field>
-            <input matInput placeholder="Địa chỉ" formControlName="Address">
-          </mat-form-field>
-          <mat-form-field>
-            <mat-label>Chọn Admin*</mat-label>
-            <input type="text" placeholder="Vui lòng chọn" aria-label="text" matInput formControlName="Admin"
-              [matAutocomplete]="auto">
-            <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete" [displayWith]="displayFn">
-              <mat-option *ngFor="let admin of filteredOptions | async" [value]="admin">
-                {{admin.FullName}}
-              </mat-option>
-            </mat-autocomplete>
-          </mat-form-field>
-          <div class="radio-custom">
-            <label>Thiết lập trạng thái hoạt động</label>
-            <mat-radio-group class="radio-custom" formControlName="Active">
-              <mat-radio-button value="true">Cho phép hoạt động</mat-radio-button>
-              <mat-radio-button value="false">Dừng hoạt động</mat-radio-button>
-            </mat-radio-group>
+        <!-- end row -->
+        <ng-template #addAgency>
+          <h1 mat-dialog-title class="text-center"> {{isUpdate==true?'Cập nhật': 'Tạo mới'}} đại lý </h1>
+          <div mat-dialog-content>
+            <form [formGroup]="addForm">
+              <mat-form-field>
+                <input matInput placeholder="Tên đại lý" formControlName="AgencyName">
+                <!-- <mat-error class="error-message"
+                  *ngIf="addForm.get('name').hasError('required') && (addForm.get('name').dirty || addForm.get('name').touched)">
+                  Không được bỏ trống trường này
+                </mat-error> -->
+              </mat-form-field>
+              <mat-form-field>
+                <input matInput placeholder="Số điện thoại" formControlName="Phone">
+              </mat-form-field>
+              <mat-form-field>
+                <input matInput placeholder="Địa chỉ" formControlName="Address">
+              </mat-form-field>
+              <mat-form-field>
+                <mat-label>Chọn Admin*</mat-label>
+                <input type="text" placeholder="Vui lòng chọn" aria-label="text" matInput formControlName="Admin"
+                  [matAutocomplete]="auto">
+                <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete" [displayWith]="displayFn">
+                  <mat-option *ngFor="let admin of filteredOptions | async" [value]="admin">
+                    {{admin.FullName}}
+                  </mat-option>
+                </mat-autocomplete>
+              </mat-form-field>
+              <div class="radio-custom">
+                <label>Thiết lập trạng thái hoạt động</label>
+                <mat-radio-group class="radio-custom" formControlName="Active">
+                  <mat-radio-button value="true">Cho phép hoạt động</mat-radio-button>
+                  <mat-radio-button value="false">Dừng hoạt động</mat-radio-button>
+                </mat-radio-group>
+              </div>
+            </form>
           </div>
-        </form>
+          <div mat-dialog-actions>
+            <button mat-button mat-raised-button class="btn btn-danger" (click)="onCloseDialog()">Hủy</button>
+            <button mat-button mat-raised-button class="btn btn-primary save" align='end' *ngIf="!isUpdate"
+              (click)="saveAgency()" [disabled]="!addForm.valid">Lưu</button>
+            <button mat-button mat-raised-button class="btn btn-primary save" align='end' *ngIf="isUpdate"
+              (click)="updateAgency()" [disabled]="!addForm.valid">Cập nhật</button>
+          </div>
+        </ng-template>
       </div>
-      <div mat-dialog-actions>
-        <button mat-button mat-raised-button class="btn btn-danger" (click)="onCloseDialog()">Hủy</button>
-        <button mat-button mat-raised-button class="btn btn-primary save" align='end' *ngIf="!isUpdate" (click)="saveAgency()" [disabled]="!addForm.valid">Lưu</button>
-        <button mat-button mat-raised-button class="btn btn-primary save" align='end' *ngIf="isUpdate" (click)="updateAgency()" [disabled]="!addForm.valid">Cập nhật</button>
-      </div>
-    </ng-template>
+    </div>
   </div>
 </div>

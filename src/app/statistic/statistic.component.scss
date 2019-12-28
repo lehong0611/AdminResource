@@ -1,5 +1,38 @@
+@import '../../assets/scss/material-dashboard.scss';
+
 .card-stats {
     .card-header {
         margin: 0px 7px 0px 15px;
+
+        .card-icon {
+            padding: 0;
+        }
+    }
+
+    .card-category {
+        padding-top: 15px;
+    }
+
+    .card-title {
+        padding-right: 15px;
+        padding-bottom: 15px;
+    }
+}
+
+.category-custom {
+    position: absolute;
+    right: 0px;
+}
+
+.card-custom {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+
+.date-picker {
+    .add {
+        background: #13CE95;
+        color: $white;
     }
 }

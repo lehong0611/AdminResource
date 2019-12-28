@@ -42,18 +42,22 @@ export class ManageAgencyComponent implements OnInit, OnDestroy {
     private chRef: ChangeDetectorRef,
     private spinner: NgxSpinnerService,
     private geocode: GeocoderService) {
-      this.spinner.hide();
     }
 
   ngOnInit() {
+    this.spinner.show();
     forkJoin([
       this.agencyService.getAllAgency(),
       this.userService.getAllStaff()
     ]).subscribe((t: any) => {
+      this.spinner.hide();
       this.listAgency = t[0].results;
       this.chRef.detectChanges();
       this.dtTrigger.next();
       this.listStaff = t[1].results;
+    }, (err) => {
+      this.spinner.hide();
+      console.log(err);
     });
 
     this.addForm = this.formBuilder.group({
@@ -80,12 +84,13 @@ export class ManageAgencyComponent implements OnInit, OnDestroy {
       'lengthChange': false,
       'ordering': false,
       'columnDefs': [
-        { 'width': '15%', 'targets': 1 },
+        { 'width': '5%', 'targets': 0 },
+        { 'width': '10%', 'targets': 1 },
         { 'width': '10%', 'targets': 2 },
-        { 'width': '30%', 'targets': 3 },
-        { 'width': '15%', 'targets': 4 },
+        { 'width': '28%', 'targets': 3 },
+        { 'width': '10%', 'targets': 4 },
         { 'width': '10%', 'targets': 5 },
-        { 'width': '20%', 'targets': 6 }
+        { 'width': '22%', 'targets': 6 }
       ],
       'createdRow': function (row, data, dataIndex) {
         if (data[5] === 'Active') {
@@ -113,7 +118,7 @@ export class ManageAgencyComponent implements OnInit, OnDestroy {
     return admin ? admin.FullName : undefined;
   }
 
-  openDialogAdd(item) {
+  openDialogAdd(item?) {
     this.isUpdate = false;
     if (item) {
       this.isUpdate = true;
@@ -173,16 +178,34 @@ export class ManageAgencyComponent implements OnInit, OnDestroy {
   }
 
   openStopDialog(agency) {
+    console.log(agency);
     const statusAgency = {
-      AgencyName: agency.AgencyName,
-      Phone: agency.Phone,
-      Address: agency.Address,
-      Active: !agency.Active
+      AgencyName: agency.brand.AgencyName,
+      Phone: agency.brand.Phone,
+      Address: agency.brand.Address.name,
+      Lat: agency.brand.Address.lat,
+      Lng: agency.brand.Address.lng,
+      Active: !agency.brand.Active
+    }
+
+    let admin = {
+      FullName: agency.admin.FullName,
+      UserName: agency.admin.UserName,
+      Image: agency.admin.Image,
+      Phone: agency.admin.Phone,
+      Role: agency.admin.Role,
+      Active: !agency.admin.Active
     }
 
     this.agencyService.updateAgency(agency.AgencyId, statusAgency).subscribe(res => {
       this.agencyService.getAllAgency().subscribe((updateList: any) => {
         this.listAgency = updateList.results;
+        console.log(this.listAgency);
+        this.userService.updateEmp(agency.admin.UserId, admin).subscribe((res: any) => {
+          this.agencyService.getAllAgency().subscribe((newList: any) => {
+            console.log('update success');
+          });
+        });
         this.rerender();
       });
       console.log('Change status successfully!');
@@ -197,7 +220,6 @@ export class ManageAgencyComponent implements OnInit, OnDestroy {
     const address = this.addForm.get('Address').value;
     const AdminId = this.addForm.get('Admin').value.UserId;
     this.geocode.geocodeAddress(address).subscribe((res: any) => {
-      console.log(res);
       this.addForm.value.Lat = res.results[0].geometry.location.lat;
       this.addForm.value.Lng = res.results[0].geometry.location.lng;
       const newAgency = this.addForm.value;

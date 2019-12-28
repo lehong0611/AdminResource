@@ -14,7 +14,7 @@ export class AgencyService {
   };
 
   addNewAgency(params) {
-      return this.http.post(`${this.baseUrl}/branch/createAgency`, params);
+    return this.http.post(`${this.baseUrl}/branch/createAgency`, params);
   }
 
   updateAgency(id: Number, params) {
@@ -23,5 +23,9 @@ export class AgencyService {
 
   deleteAgency(id: Number) {
     return this.http.delete(`${this.baseUrl}/branch/deleteAgency/${id}`);
+  }
+
+  getReportAllAgency(params) {
+    return this.http.post(`${this.baseUrl}/branch/reportAllAgency`, params);
   }
 }

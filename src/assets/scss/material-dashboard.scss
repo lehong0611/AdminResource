@@ -1,20 +1,4 @@
-/*!
 
-=========================================================
-* Material Dashboard Angular - v2.3.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-dashboard-angular2
-* Copyright 2019 Creative Tim (https://www.creative-tim.com)
-* Licensed under MIT (https://github.com/creativetimofficial/material-dashboard-angular2/blob/master/LICENSE.md)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
  @import "~@angular/material/prebuilt-themes/indigo-pink.css";
 
  @import "core/variables";
@@ -57,3 +41,26 @@
  @import "core/responsive";
 
 @import "core/angular-modal.scss";
+.card.card-manage {
+    [data-background-color] {
+        margin: -20px 15px 0;
+        border-radius: 3px;
+        padding: 15px;
+        position: absolute;
+    }
+
+    [data-background-color="purple"] {
+        background: #13CE95;
+        @include shadow-big-color($brand-primary);
+    }
+
+    .card-content {
+        padding: 15px 20px;
+        position: relative;
+    }
+}
+
+.material-datatables input.form-control:focus {
+    box-shadow: none;
+}
+

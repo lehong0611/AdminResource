@@ -7,6 +7,7 @@ import { DataTableDirective } from 'angular-datatables';
 import { User } from '../models/user.model';
 import { UserService } from 'app/services/user.service';
 import { Subject } from 'rxjs';
+import { NgxSpinnerService } from 'ngx-spinner';
 
 declare const $: any;
 
@@ -30,8 +31,6 @@ export class ManageEmployeeComponent implements OnInit, OnDestroy {
 
   listEmployee = [];
   listExceptSuper = [];
-  listShipper: User[];
-  hide: boolean;
   userSuper: boolean;
 
   fileToUpload: File = null;
@@ -41,30 +40,22 @@ export class ManageEmployeeComponent implements OnInit, OnDestroy {
   constructor(private dialog: MatDialog,
     private formBuilder: FormBuilder,
     private userService: UserService,
-    private chRef: ChangeDetectorRef) { }
+    private chRef: ChangeDetectorRef,
+    private spinner: NgxSpinnerService) { }
 
   ngOnInit() {
-    this.hide = true;
+    this.spinner.show();
     this.userSuper = false;
     this.dialog.closeAll();
     this.initTable();
-    if (this.userSuper) {
-      this.userService.getAllEmployee().subscribe((res: any) => {
-        this.listEmployee = res.results;
-        this.chRef.detectChanges();
-        this.dtTrigger.next();
-      }, err => {
-        console.log(err);
-      });
-    } else {
-      this.userService.getAllUserByRole(29, 'shipper').subscribe((res: any) => {
-        this.listEmployee = res.results;
-        this.chRef.detectChanges();
-        this.dtTrigger.next();
-      }, err => {
-        console.log(err);
-      });
-    }
+    this.userService.getAllEmployee().subscribe((res: any) => {
+      this.spinner.hide();
+      this.listEmployee = res.results;
+      this.chRef.detectChanges();
+      this.dtTrigger.next();
+    }, err => {
+      console.log(err);
+    });
     this.addForm = this.formBuilder.group({
       UserId: [null],
       FullName: ['', Validators.required],
@@ -125,7 +116,7 @@ export class ManageEmployeeComponent implements OnInit, OnDestroy {
     }
   }
 
-  openDialogAdd(item) {
+  openDialogAdd(item?) {
     this.isUpdate = false;
     if (item) {
       this.isUpdate = true;
@@ -157,7 +148,7 @@ export class ManageEmployeeComponent implements OnInit, OnDestroy {
   }
 
   handleFileInput(files: FileList) {
-    this.fileToUpload = files.item(0);
+    this.fileToUpload = files[0];
   }
 
   // Method to Add new Emp
@@ -183,13 +174,11 @@ export class ManageEmployeeComponent implements OnInit, OnDestroy {
       const newEmp = this.addForm.value;
       this.userService.addNewEmp(newEmp).subscribe((res: any) => {
         this.userService.getAllEmployee().subscribe((newList: any) => {
-          console.log(newList.results);
           this.listEmployee = newList.results;
           this.dialog.closeAll();
           this.addForm.reset();
           this.rerender();
         });
-        console.log('New Product added');
       }, err => {
         console.log('Could not add Agency')
       });
@@ -201,7 +190,6 @@ export class ManageEmployeeComponent implements OnInit, OnDestroy {
     const newEmp = this.addForm.value;
     if (this.fileToUpload) {
       this.userService.postFile(this.fileToUpload).subscribe((res: any) => {
-        console.log(res);
         const imgUrl = `http://localhost:3000/uploads/${res.filename}`;
         newEmp.Image = imgUrl;
         this.userService.updateEmp(id, newEmp).subscribe(() => {
@@ -216,27 +204,25 @@ export class ManageEmployeeComponent implements OnInit, OnDestroy {
           console.log('Could not update')
         });
       })
-    }
-    this.userService.updateEmp(id, newEmp).subscribe(() => {
-      this.userService.getAllEmployee().subscribe((updateList: any) => {
-        this.listEmployee = updateList.results;
-        this.dialog.closeAll();
-        this.addForm.reset();
-        this.rerender();
+    } else {
+      this.userService.updateEmp(id, newEmp).subscribe(() => {
+        this.userService.getAllEmployee().subscribe((updateList: any) => {
+          this.listEmployee = updateList.results;
+          this.dialog.closeAll();
+          this.addForm.reset();
+          this.rerender();
+        });
+        console.log('Product is updated');
+      }, err => {
+        console.log('Could not update')
       });
-      console.log('Product is updated');
-    }, err => {
-      console.log('Could not update')
-    });
+    }
   }
 
   // We will use this method to destroy old table and re-render new table
   rerender() {
     this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
-      // Destroy the table first in the current context
       dtInstance.destroy();
-
-      // Call the dtTrigger to rerender again
       this.dtTrigger.next();
 
     });
@@ -266,7 +252,6 @@ export class ManageEmployeeComponent implements OnInit, OnDestroy {
       if (result.value) {
         this.userService.deleteEmp(id).subscribe(res => {
           this.userService.getAllEmployee().subscribe((newList: any) => {
-            console.log(newList.results);
             this.listEmployee = newList.results;
             swalWithBootstrapButtons.fire('Đã xóa')
             this.rerender();
@@ -280,7 +265,6 @@ export class ManageEmployeeComponent implements OnInit, OnDestroy {
   }
 
   onStopActive(emp) {
-    console.log(emp);
     const statusAdmin = {
       FullName: emp.FullName,
       UserName: emp.UserName,

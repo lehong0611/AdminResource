@@ -1,23 +1,48 @@
-import { Component, OnInit, ViewChild, TemplateRef, AfterViewInit, OnChanges, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { FormControl } from '@angular/forms';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { Subject, Observable, forkJoin } from 'rxjs';
+import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 
-import { OrderService } from '../services/order.service';
+import { MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
+import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 
-import { Customer } from '../models/customer.model';
+import * as moment from 'moment';
+// import { default as _rollupMoment} from 'moment';
+
+import { OrderService } from '../services/order.service';
 import { GeocoderService } from 'app/services/geocoder.service';
 import { UserService } from 'app/services/user.service';
 
 declare const $: any;
 
+export const MY_FORMATS = {
+  parse: {
+    dateInput: 'DD/MM/YYYY',
+  },
+  display: {
+    dateInput: 'DD/MM/YYYY',
+    monthYearLabel: 'MMM YYYY',
+    dateA11yLabel: 'LL',
+    monthYearA11yLabel: 'MMMM YYYY',
+  },
+};
+
 @Component({
   selector: 'app-manage-order',
   templateUrl: './manage-order.component.html',
-  styleUrls: ['./manage-order.component.scss']
+  styleUrls: ['./manage-order.component.scss'],
+  providers: [
+    {
+      provide: DateAdapter,
+      useClass: MomentDateAdapter,
+      deps: [MAT_DATE_LOCALE, MAT_MOMENT_DATE_ADAPTER_OPTIONS]
+    },
+
+    {provide: MAT_DATE_FORMATS, useValue: MY_FORMATS},
+  ],
 })
 export class ManageOrderComponent implements OnInit {
 
@@ -37,11 +62,13 @@ export class ManageOrderComponent implements OnInit {
     { key: 'available', text: 'Mới tạo' },
     { key: 'waiting', text: 'Chờ xác nhận' },
     { key: 'unavailable', text: 'Chờ lấy về đại lý' },
-    { key: 'assigned', text: 'Đã tiếp nhận' },
-    { key: 'assigning', text: 'Chuyển tiếp' },
+    // { key: 'assigned', text: 'Đã tiếp nhận' },
+    // { key: 'assigning', text: 'Chuyển tiếp' },
+    { key: 'taken', text: 'Shipper đã lấy' },
+    { key: 'wait-trans', text: 'Chờ giao' },
     { key: 'transfering', text: 'Đang giao' },
-    { key: 'success', text: 'Thành công' },
-    { key: 'failed', text: 'Thất bại' },
+    { key: 'success', text: 'Hoàn thành' },
+    { key: 'failed', text: 'Thất bại' }
   ];
   listKindOfOrder = [
     { value: 0, text: 'Thời trang - Phụ kiện' },
@@ -142,6 +169,7 @@ export class ManageOrderComponent implements OnInit {
     this.formShipper = new FormControl(null, Validators.required);
     this.selectAgency = new FormControl(null, Validators.required);
     this.EstimatedTime = new FormControl('', Validators.required);
+    // console.log(this.listTabs);
   }
 
   openModalAccept(order: any, isReject) {
@@ -167,6 +195,8 @@ export class ManageOrderComponent implements OnInit {
   accept(isReject) {
     let params = this.Order;
     params.OrderStatusTime = new Date();
+    params.AdminId = this.Order.AcceptAdminId.AdminId;
+    params.AcceptTime = new Date();
     if (!isReject) {
       params.OrderStatusName = 'unavailable';
       params.TransportCharge = this.inputCharge.value;
@@ -187,6 +217,8 @@ export class ManageOrderComponent implements OnInit {
   }
 
   changeTab(status) {
+    this.listSelected = [];
+    this.isSelected = new FormControl();
     this.litsOrdersByStatus(status);
   }
 
@@ -197,8 +229,8 @@ export class ManageOrderComponent implements OnInit {
       pageCurrent: this.page,
       pageSize: this.pageSize
     }
-    const CreatedUserId = 12;
-    this.orderService.getOrdersByStatus(status, CreatedUserId, pagination.pageCurrent, pagination.pageSize, 29).subscribe((res: any) => {
+    // const CreatedUserId = 12;
+    this.orderService.getOrdersByStatus(status, pagination.pageCurrent, pagination.pageSize).subscribe((res: any) => {
       this.spinner.hide();
       this.listOrder = res.results.orders;
       this.totalCount = res.results.counts;
@@ -220,15 +252,16 @@ export class ManageOrderComponent implements OnInit {
       case 'transfering':
         return 'Đang giao';
       case 'success':
-        return 'Thành công';
-      case 'fail':
+        return 'Hoàn thành';
+      case 'failed':
         return 'Thất bại';
+      case 'wait-trans':
+        return 'Chờ giao'
     }
   }
 
   onDetailOrder(order) {
     this.Order = order;
-    console.log(this.Order);
     this.dialog.open(this.detailOrder, {
       width: '50%',
       autoFocus: true,
@@ -254,6 +287,7 @@ export class ManageOrderComponent implements OnInit {
   }
 
   onAddOrderModal() {
+    this.addForm.controls['Service'].setValue('Chuẩn');
     this.dialog.open(this.addOrder, {
       width: '50%',
       autoFocus: true,
@@ -263,13 +297,13 @@ export class ManageOrderComponent implements OnInit {
 
   saveNewOrder() {
     const newOrder = this.addForm.value;
-    newOrder.CreatedUserId = 12;
     newOrder.OrderStatusName = 'available';
     newOrder.OrderStatusTime = new Date();
     newOrder.EstimatedTime = this.EstimatedTime.value;
     console.log(newOrder);
     this.orderService.addNewOrder(newOrder).subscribe(res => {
       this.addForm.reset();
+      this.EstimatedTime.reset();
       this.initStatus = 'available';
       this.changeTab('available');
       this.dialog.closeAll();
@@ -310,8 +344,7 @@ export class ManageOrderComponent implements OnInit {
       pageCurrent: this.page,
       pageSize: this.pageSize
     }
-    const CreatedUserId = 18;
-    this.orderService.getOrdersByStatus(status, CreatedUserId, pagination.pageCurrent, pagination.pageSize, 29).subscribe((res: any) => {
+    this.orderService.getOrdersByStatus(status, pagination.pageCurrent, pagination.pageSize).subscribe((res: any) => {
       this.spinner.hide();
       this.listOrder = res.results.orders;
     })
@@ -339,7 +372,7 @@ export class ManageOrderComponent implements OnInit {
   }
 
   openAssignedShipper() {
-    this.userService.getAllUserByRole(16, 'shipper').subscribe((res: any) => {
+    this.userService.getAllUserByRole('shipper').subscribe((res: any) => {
       this.listShippers = res.results.filter(shipper => {
         return shipper.Active === true;
       });
@@ -358,16 +391,27 @@ export class ManageOrderComponent implements OnInit {
   }
 
   assignedShipper() {
-    console.log(this.formShipper.value);
     this.listSelected.forEach(item => {
       let params = item;
       params.OrderStatusTime = new Date();
-      if (item.OrderStatus.name === 'available') {
+      if (params.AcceptAdminId && params.AcceptAdminId.AdminId && params.AcceptAdminId.acceptTime) {
+        params.AdminId = item.AcceptAdminId.AdminId;
+        params.AcceptTime = item.AcceptAdminId.acceptTime;
+        console.log(params);
+      }// } else {
+      //   params.AcceptAdminId = null;
+      //   params.AcceptTime = null;
+      // }
+      if (item.OrderStatus.name === 'wait-trans') {
         params.OrderStatusName = 'transfering';
         params.ShipperTransId = this.formShipper.value.UserId;
       } else {
         params.OrderStatusName = 'unavailable';
         params.ShipperGetOrderId = this.formShipper.value.UserId;
+      }
+      if (params.Taken && params.Taken.date && params.Taken.isSuccess) {
+        params.isTakeSuccess = params.Taken.isSuccess;
+        params.TakeTime = params.Taken.date;
       }
       this.orderService.updateStatusOrder(item.OrderId, params).subscribe((res: any) => {
         if (res.results.OrderStatus.name === 'unavailable') {
@@ -375,8 +419,8 @@ export class ManageOrderComponent implements OnInit {
           this.isSelected.disable();
           this.changeTab('unavailable');
         } else {
-          this.initStatus = 'available';
-          this.changeTab('available');
+          this.initStatus = 'wait-trans';
+          this.changeTab('wait-trans');
         }
         this.formShipper.reset();
         this.isSelected.reset();
