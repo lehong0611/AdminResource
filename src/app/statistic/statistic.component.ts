@@ -63,8 +63,8 @@ export class StatisticComponent implements OnInit {
     this.role = localStorage.getItem('role');
     this.isShowReport = false;
     this.searchMonthValue = this.fb.group({
-      toDate: ['', Validators.required],
-      fromDate: ['', Validators.required]
+      toDate: [new Date(), Validators.required],
+      fromDate: [new Date(), Validators.required]
     });
   }
 

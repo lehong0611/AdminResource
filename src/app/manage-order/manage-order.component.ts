@@ -257,6 +257,8 @@ export class ManageOrderComponent implements OnInit {
         return 'Thất bại';
       case 'wait-trans':
         return 'Chờ giao'
+      case 'taken':
+        return 'Shipper đã lấy'
     }
   }
 
@@ -402,10 +404,10 @@ export class ManageOrderComponent implements OnInit {
       //   params.AcceptAdminId = null;
       //   params.AcceptTime = null;
       // }
-      if (item.OrderStatus.name === 'wait-trans') {
+      if (item.OrderStatus.name === 'wait-trans' || item.OrderStatus.name === 'available') {
         params.OrderStatusName = 'transfering';
         params.ShipperTransId = this.formShipper.value.UserId;
-      } else {
+      } else if (item.OrderStatus.name === 'unavailable') {
         params.OrderStatusName = 'unavailable';
         params.ShipperGetOrderId = this.formShipper.value.UserId;
       }
@@ -418,9 +420,12 @@ export class ManageOrderComponent implements OnInit {
           this.initStatus = 'unavailable';
           this.isSelected.disable();
           this.changeTab('unavailable');
-        } else {
+        } else if (res.results.OrderStatus.name === 'wait-trans') {
           this.initStatus = 'wait-trans';
           this.changeTab('wait-trans');
+        } else if (res.results.OrderStatus.name === 'available') {
+          this.initStatus = 'available';
+          this.changeTab('available');
         }
         this.formShipper.reset();
         this.isSelected.reset();

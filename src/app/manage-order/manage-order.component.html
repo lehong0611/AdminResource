@@ -186,15 +186,15 @@
                       <span>{{Order.Service === 'Chuẩn' ? 'Giao hàng thường': 'Giao hàng nhanh'}}</span>
                     </div>
                     <div class="detail-info">
-                      <i class="material-icons">attach_money</i>
+                      <i class="material-icons">account_balance_wallet</i>
                       <span>{{Order.Cost}} VNĐ</span>
                     </div>
                     <div class="detail-info">
                       <i class="material-icons">access_time</i>
-                      <span>{{Order.CreatedTime | amDateFormat: 'DD/MM/YYYY, h:mm a' }}</span>
+                      <span>{{ Order.EstimatedTime | amDateFormat: 'DD/MM/YYYY' }}</span>
                     </div>
                     <div class="detail-info" *ngIf="Order.OrderStatus.name !== 'waiting'">
-                      <i class="material-icons">account_balance_wallet </i>
+                      <i class="material-icons">account_balance_wallet</i>
                       <span>{{Order.TransportCharge}} VNĐ</span>
                     </div>
                     <div class="detail-info" *ngIf="Order.Note">
@@ -221,8 +221,8 @@
                       <span>{{Order.ShipperGetOrderId}}</span>
                     </div>
                     <div class="detail-info" *ngIf="Order.OrderStatus.name !== 'waiting'">
-                      <i class="material-icons">date_range</i>
-                      <span>{{ Order.EstimatedTime | amDateFormat: 'DD/MM/YYYY' }}</span>
+                      <!-- <i class="material-icons">date_range</i> -->
+                      <span>Ngày hoàn thành: {{ Order.OrderStatus.time | amDateFormat: 'DD/MM/YYYY' }}</span>
                     </div>
                   </div>
                 </div>

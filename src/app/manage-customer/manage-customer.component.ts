@@ -66,13 +66,13 @@ export class ManageCustomerComponent implements OnInit, OnDestroy {
       'lengthChange': false,
       'ordering': false,
       'columnDefs': [
-        { 'width': '10%', 'targets': 1 },
+        { 'width': '15%', 'targets': 1 },
         { 'width': '10%', 'targets': 2 },
         { 'width': '15%', 'targets': 3 },
         { 'width': '10%', 'targets': 4 },
         { 'width': '25%', 'targets': 5 },
         { 'width': '10%', 'targets': 6 },
-        { 'width': '20%', 'targets': 7 }
+        { 'width': '15%', 'targets': 7 }
       ],
       'createdRow': function (row, data, dataIndex) {
         if (data[6] === 'Active') {
